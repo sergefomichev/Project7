@@ -1,4 +1,15 @@
-import { ArrowRight, ChevronDown, Menu, Star } from "lucide-react";
+import {
+  ArrowRight,
+  Boxes,
+  Braces,
+  ChevronDown,
+  Code2,
+  GitBranch,
+  Menu,
+  MessageSquareText,
+  Star,
+  Workflow,
+} from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import * as THREE from "three";
 
@@ -127,23 +138,26 @@ function useHeroCursor() {
 }
 
 function App() {
-  return <HeroSection />;
+  return (
+    <main className="min-h-screen bg-[#f4f4f1] text-[#252728]">
+      <HeroSection />
+      <BrandDnaSection />
+    </main>
+  );
 }
 
 function HeroSection() {
   const cursor = useHeroCursor();
 
   return (
-    <main className="min-h-screen bg-[#eef3f5] text-[#252728]">
-      <section className="relative isolate min-h-[100svh] overflow-hidden">
-        <ShaderBackground />
-        <InteractiveGlassPanels cursor={cursor} />
-        <div className="absolute inset-0 z-[3] bg-[linear-gradient(180deg,rgba(255,255,255,0)_0%,rgba(244,247,248,0.18)_54%,rgba(239,244,245,0.82)_100%)]" />
-        <DnaShader />
-        <TopNav />
-        <HeroContent />
-      </section>
-    </main>
+    <section className="relative isolate min-h-[100svh] overflow-hidden bg-[#eef3f5]">
+      <ShaderBackground />
+      <InteractiveGlassPanels cursor={cursor} />
+      <div className="absolute inset-0 z-[3] bg-[linear-gradient(180deg,rgba(255,255,255,0)_0%,rgba(244,247,248,0.18)_54%,rgba(239,244,245,0.82)_100%)]" />
+      <DnaShader />
+      <TopNav />
+      <HeroContent />
+    </section>
   );
 }
 
@@ -471,6 +485,204 @@ function HeroContent() {
             <p>trusted by engineering-led teams</p>
           </div>
         </div>
+      </div>
+    </div>
+  );
+}
+
+const processSteps = [
+  {
+    icon: Boxes,
+    label: "Brand DNA",
+    meta: "FOUNDATION",
+    description: "Clarify the product promise, buying context and language system before interface work begins.",
+  },
+  {
+    icon: MessageSquareText,
+    label: "Stakeholder Sessions",
+    meta: "ALIGNMENT",
+    description: "Map priorities across product, sales, leadership and engineering without flattening the nuance.",
+  },
+  {
+    icon: GitBranch,
+    label: "Decision Path",
+    meta: "CTO FLOW",
+    description: "Define how technical buyers evaluate proof, risk, implementation and time-to-value.",
+  },
+  {
+    icon: Workflow,
+    label: "Engineering Handoff",
+    meta: "VELOCITY",
+    description: "Turn the narrative into reusable systems, page logic and execution-ready direction.",
+  },
+];
+
+function BrandDnaSection() {
+  return (
+    <section className="relative z-20 -mt-8 overflow-hidden rounded-t-[34px] bg-[#f7f7f4] text-[#252728] shadow-[0_-28px_70px_rgba(35,48,54,0.06)] sm:-mt-10 sm:rounded-t-[48px] lg:-mt-14 lg:rounded-t-[64px]">
+      <div className="pointer-events-none absolute inset-x-0 top-0 h-48 bg-[linear-gradient(180deg,rgba(255,255,255,0.92),rgba(247,247,244,0))]" />
+      <div className="pointer-events-none absolute left-1/2 top-[-18%] h-[520px] w-[820px] -translate-x-1/2 rounded-full bg-[radial-gradient(circle,rgba(118,190,255,0.14),rgba(255,207,118,0.09)_36%,transparent_70%)] blur-3xl" />
+
+      <div className="relative mx-auto max-w-[1480px] px-5 pb-24 pt-16 sm:px-6 sm:pb-28 sm:pt-20 lg:px-7 lg:pb-36 lg:pt-24">
+        <div className="mb-14 grid gap-8 border-b border-black/10 pb-9 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] lg:items-end">
+          <div>
+            <div className="mb-6 inline-flex items-center gap-3 text-[12px] font-medium uppercase tracking-[0.18em] text-black/45">
+              <span className="h-2 w-2 rounded-full bg-[#ff4b24]" />
+              Case intro / process
+            </div>
+            <h2 className="max-w-[840px] text-[clamp(3rem,6.2vw,7rem)] font-normal leading-[0.94] tracking-[-0.065em] text-[#242728]">
+              We started with Brand DNA, not UI.
+            </h2>
+          </div>
+
+          <div className="grid gap-6 lg:justify-items-end">
+            <p className="max-w-[520px] text-[17px] leading-[1.45] tracking-[-0.02em] text-black/68 sm:text-[20px]">
+              Before redesigning screens, we rebuilt the shared decision model: what the product means, who must believe it, and how engineering-led buyers move from doubt to commitment.
+            </p>
+            <div className="flex w-full max-w-[520px] items-center justify-between border-t border-black/12 pt-5 text-[12px] uppercase tracking-[0.16em] text-black/42">
+              <span>Discovery</span>
+              <ArrowRight size={18} strokeWidth={1.4} />
+              <span>Alignment</span>
+              <ArrowRight size={18} strokeWidth={1.4} />
+              <span>Execution</span>
+            </div>
+          </div>
+        </div>
+
+        <ProcessRibbon />
+        <EditorSurface />
+      </div>
+    </section>
+  );
+}
+
+function ProcessRibbon() {
+  return (
+    <div className="relative mb-10 rounded-[24px] border border-black/10 bg-white/42 px-4 py-5 shadow-[0_20px_70px_rgba(26,35,38,0.06)] backdrop-blur-xl sm:px-6 lg:mb-12">
+      <div className="grid gap-4 md:grid-cols-4 md:divide-x md:divide-black/10">
+        {processSteps.map((step, index) => {
+          const Icon = step.icon;
+
+          return (
+            <div key={step.label} className="group relative px-2 py-3 md:px-5">
+              <div className="mb-5 flex items-center gap-3">
+                <div className={index === 0 ? "process-icon process-icon-active" : "process-icon"}>
+                  <Icon size={18} strokeWidth={1.7} />
+                </div>
+                <span className="rounded-full border border-black/10 bg-white/60 px-2 py-1 text-[10px] font-semibold uppercase tracking-[0.12em] text-black/42">
+                  {step.meta}
+                </span>
+              </div>
+              <h3 className="mb-2 text-[16px] font-medium tracking-[-0.02em] text-[#242728]">{step.label}</h3>
+              <p className="max-w-[270px] text-[13px] leading-[1.35] text-black/52">{step.description}</p>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+function EditorSurface() {
+  const codeLines = [
+    "brandDNA.define({",
+    "  audience: 'CTO + engineering leads',",
+    "  promise: 'velocity without loss of clarity',",
+    "  riskModel: ['migration', 'team focus', 'delivery confidence'],",
+    "  decisionPath: mapStakeholders(sessions),",
+    "});",
+    "",
+    "handoff.createSystem({",
+    "  narrative: brandDNA.language,",
+    "  proof: decisionPath.evidence,",
+    "  implementation: 'component-ready direction',",
+    "});",
+  ];
+
+  return (
+    <div className="relative overflow-hidden rounded-[32px] border border-black/10 bg-[#eeeeeb]/82 shadow-[0_42px_120px_rgba(30,38,42,0.12)] backdrop-blur-2xl lg:rounded-[42px]">
+      <div className="flex items-center justify-between border-b border-black/8 px-5 py-5 text-[13px] text-black/36 sm:px-7">
+        <div className="flex items-center gap-2">
+          <span className="h-3 w-3 rounded-full bg-[#f0645b]" />
+          <span className="h-3 w-3 rounded-full bg-[#efbd45]" />
+          <span className="h-3 w-3 rounded-full bg-[#67bf6b]" />
+        </div>
+        <div className="hidden items-center gap-2 sm:flex">
+          <span className="h-3 w-3 rounded-full border border-black/18" />
+          <span>onlytrusted.process</span>
+        </div>
+        <div className="flex items-center gap-3 text-black/24">
+          <Braces size={17} />
+          <Code2 size={17} />
+        </div>
+      </div>
+
+      <div className="grid min-h-[560px] lg:grid-cols-[280px_minmax(0,1fr)_340px]">
+        <aside className="hidden border-r border-black/8 bg-white/28 p-6 lg:block">
+          <div className="mb-5 flex items-center gap-2 text-[12px] font-medium uppercase tracking-[0.14em] text-black/36">
+            <span className="h-2 w-2 rounded-full bg-[#ff4b24]" />
+            Sessions
+          </div>
+          {["Leadership priorities", "Buyer objections", "Engineering constraints", "Migration anxieties", "Proof hierarchy"].map((item, index) => (
+            <div
+              key={item}
+              className={index === 1 ? "mb-2 rounded-[14px] bg-white px-4 py-3 text-[14px] text-black/70 shadow-[0_12px_30px_rgba(0,0,0,0.05)]" : "mb-2 rounded-[14px] px-4 py-3 text-[14px] text-black/34"}
+            >
+              {item}
+            </div>
+          ))}
+        </aside>
+
+        <div className="relative border-r border-black/8 p-5 sm:p-7">
+          <div className="mb-6 flex items-center justify-between border-b border-black/8 pb-4 text-[13px] text-black/38">
+            <span>brand-dna.ts</span>
+            <span>case-intro</span>
+          </div>
+          <div className="font-mono text-[13px] leading-[1.95] text-black/38 sm:text-[14px]">
+            {codeLines.map((line, index) => (
+              <div key={`${line}-${index}`} className="grid grid-cols-[34px_minmax(0,1fr)] gap-4">
+                <span className="select-none text-right text-black/16">{index + 1}</span>
+                <span className={line.includes("brandDNA") || line.includes("handoff") ? "text-[#4267ff]/78" : line.includes("'") ? "text-[#7661ff]/62" : ""}>
+                  {line || "\u00a0"}
+                </span>
+              </div>
+            ))}
+          </div>
+
+          <div className="pointer-events-none absolute inset-x-0 bottom-0 h-56 bg-[linear-gradient(180deg,rgba(247,247,244,0),rgba(247,247,244,0.94)_70%)]" />
+          <div className="absolute bottom-8 left-1/2 w-[min(520px,calc(100%-40px))] -translate-x-1/2 text-center">
+            <div className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-full border border-[#ff4b24]/25 bg-white/80 text-[#ff4b24] shadow-[0_18px_48px_rgba(255,75,36,0.12)]">
+              <Workflow size={26} strokeWidth={1.5} />
+            </div>
+            <h3 className="mb-2 text-[24px] font-medium tracking-[-0.04em] text-[#282b2c]">A process layer before the interface layer</h3>
+            <p className="mx-auto max-w-[470px] text-[14px] leading-[1.45] text-black/48">
+              Every screen inherited a shared strategic spine, so product, marketing and engineering could move faster without re-litigating the story.
+            </p>
+          </div>
+        </div>
+
+        <aside className="relative hidden bg-white/24 p-6 lg:block">
+          <div className="mb-5 text-[12px] font-medium uppercase tracking-[0.14em] text-black/36">Preview</div>
+          <div className="space-y-4">
+            {[
+              ["Audience clarity", "CTOs and engineering leads"],
+              ["Primary tension", "move faster without losing trust"],
+              ["System output", "narrative, IA and component direction"],
+            ].map(([label, value]) => (
+              <div key={label} className="rounded-[18px] border border-black/8 bg-white/56 p-4">
+                <div className="mb-2 text-[11px] uppercase tracking-[0.14em] text-black/32">{label}</div>
+                <div className="text-[15px] leading-[1.25] tracking-[-0.02em] text-black/70">{value}</div>
+              </div>
+            ))}
+          </div>
+          <div className="absolute bottom-6 left-6 right-6 rounded-[22px] bg-[#282b2c] p-5 text-white shadow-[0_22px_60px_rgba(0,0,0,0.18)]">
+            <div className="mb-8 text-[12px] uppercase tracking-[0.18em] text-white/40">Next</div>
+            <div className="flex items-end justify-between gap-5">
+              <p className="max-w-[190px] text-[22px] leading-[1.02] tracking-[-0.05em]">Turn alignment into page architecture.</p>
+              <ArrowRight size={22} strokeWidth={1.4} />
+            </div>
+          </div>
+        </aside>
       </div>
     </div>
   );
