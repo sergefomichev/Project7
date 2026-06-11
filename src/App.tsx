@@ -544,7 +544,7 @@ function BrandDnaSection() {
               <span className="h-2 w-2 rounded-full bg-[#7a5cff]" />
               Case intro / process
             </div>
-            <h2 className="max-w-[840px] text-[clamp(3rem,6.2vw,7rem)] font-normal leading-[0.94] tracking-[-0.065em] text-[#242728]">
+            <h2 className="max-w-[780px] text-[clamp(2.25rem,4.25vw,4.75rem)] font-normal leading-[0.98] tracking-[-0.055em] text-[#242728]">
               We started with Brand DNA, not UI.
             </h2>
           </div>
