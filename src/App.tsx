@@ -496,38 +496,52 @@ const processSteps = [
     label: "Brand DNA",
     meta: "FOUNDATION",
     description: "Clarify the product promise, buying context and language system before interface work begins.",
+    file: "brand-dna.ts",
+    focus: "Product meaning, promise and category language.",
   },
   {
     icon: MessageSquareText,
     label: "Stakeholder Sessions",
     meta: "ALIGNMENT",
     description: "Map priorities across product, sales, leadership and engineering without flattening the nuance.",
+    file: "sessions.md",
+    focus: "Leadership priorities, buyer objections and internal constraints.",
   },
   {
     icon: GitBranch,
     label: "Decision Path",
     meta: "CTO FLOW",
     description: "Define how technical buyers evaluate proof, risk, implementation and time-to-value.",
+    file: "decision-path.json",
+    focus: "How CTOs move from skepticism to technical confidence.",
   },
   {
     icon: Workflow,
     label: "Engineering Handoff",
     meta: "VELOCITY",
     description: "Turn the narrative into reusable systems, page logic and execution-ready direction.",
+    file: "handoff.yaml",
+    focus: "Narrative, IA and component direction ready for execution.",
   },
 ];
 
+const editorTabs = ["brand-dna.ts", "sessions.md", "decision-path.json"];
+
 function BrandDnaSection() {
+  const [activeStep, setActiveStep] = useState(0);
+  const [activeTab, setActiveTab] = useState(editorTabs[0]);
+  const activeProcess = processSteps[activeStep];
+
   return (
-    <section className="relative z-20 -mt-8 overflow-hidden rounded-t-[34px] bg-[#f7f7f4] text-[#252728] shadow-[0_-28px_70px_rgba(35,48,54,0.06)] sm:-mt-10 sm:rounded-t-[48px] lg:-mt-14 lg:rounded-t-[64px]">
+    <section className="brand-dna-section relative z-10 overflow-hidden rounded-t-[34px] bg-[#f7f7f4] text-[#252728] shadow-[0_-28px_70px_rgba(35,48,54,0.06)] sm:rounded-t-[48px] lg:rounded-t-[64px]">
       <div className="pointer-events-none absolute inset-x-0 top-0 h-48 bg-[linear-gradient(180deg,rgba(255,255,255,0.92),rgba(247,247,244,0))]" />
-      <div className="pointer-events-none absolute left-1/2 top-[-18%] h-[520px] w-[820px] -translate-x-1/2 rounded-full bg-[radial-gradient(circle,rgba(118,190,255,0.14),rgba(255,207,118,0.09)_36%,transparent_70%)] blur-3xl" />
+      <div className="pointer-events-none absolute left-1/2 top-[-18%] h-[520px] w-[820px] -translate-x-1/2 rounded-full bg-[radial-gradient(circle,rgba(122,92,255,0.16),rgba(144,204,255,0.09)_36%,transparent_70%)] blur-3xl" />
 
       <div className="relative mx-auto max-w-[1480px] px-5 pb-24 pt-16 sm:px-6 sm:pb-28 sm:pt-20 lg:px-7 lg:pb-36 lg:pt-24">
         <div className="mb-14 grid gap-8 border-b border-black/10 pb-9 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] lg:items-end">
           <div>
             <div className="mb-6 inline-flex items-center gap-3 text-[12px] font-medium uppercase tracking-[0.18em] text-black/45">
-              <span className="h-2 w-2 rounded-full bg-[#ff4b24]" />
+              <span className="h-2 w-2 rounded-full bg-[#7a5cff]" />
               Case intro / process
             </div>
             <h2 className="max-w-[840px] text-[clamp(3rem,6.2vw,7rem)] font-normal leading-[0.94] tracking-[-0.065em] text-[#242728]">
@@ -549,14 +563,20 @@ function BrandDnaSection() {
           </div>
         </div>
 
-        <ProcessRibbon />
-        <EditorSurface />
+        <ProcessRibbon activeStep={activeStep} onSelect={setActiveStep} />
+        <EditorSurface activeStep={activeStep} activeTab={activeTab} activeProcess={activeProcess} onTabChange={setActiveTab} />
       </div>
     </section>
   );
 }
 
-function ProcessRibbon() {
+function ProcessRibbon({
+  activeStep,
+  onSelect,
+}: {
+  activeStep: number;
+  onSelect: (index: number) => void;
+}) {
   return (
     <div className="relative mb-10 rounded-[24px] border border-black/10 bg-white/42 px-4 py-5 shadow-[0_20px_70px_rgba(26,35,38,0.06)] backdrop-blur-xl sm:px-6 lg:mb-12">
       <div className="grid gap-4 md:grid-cols-4 md:divide-x md:divide-black/10">
@@ -564,9 +584,15 @@ function ProcessRibbon() {
           const Icon = step.icon;
 
           return (
-            <div key={step.label} className="group relative px-2 py-3 md:px-5">
+            <button
+              key={step.label}
+              className="group relative px-2 py-3 text-left transition duration-300 hover:-translate-y-1 hover:bg-white/35 md:px-5"
+              type="button"
+              onClick={() => onSelect(index)}
+              aria-pressed={activeStep === index}
+            >
               <div className="mb-5 flex items-center gap-3">
-                <div className={index === 0 ? "process-icon process-icon-active" : "process-icon"}>
+                <div className={activeStep === index ? "process-icon process-icon-active" : "process-icon"}>
                   <Icon size={18} strokeWidth={1.7} />
                 </div>
                 <span className="rounded-full border border-black/10 bg-white/60 px-2 py-1 text-[10px] font-semibold uppercase tracking-[0.12em] text-black/42">
@@ -575,7 +601,7 @@ function ProcessRibbon() {
               </div>
               <h3 className="mb-2 text-[16px] font-medium tracking-[-0.02em] text-[#242728]">{step.label}</h3>
               <p className="max-w-[270px] text-[13px] leading-[1.35] text-black/52">{step.description}</p>
-            </div>
+            </button>
           );
         })}
       </div>
@@ -583,29 +609,53 @@ function ProcessRibbon() {
   );
 }
 
-function EditorSurface() {
-  const codeLines = [
-    "brandDNA.define({",
-    "  audience: 'CTO + engineering leads',",
-    "  promise: 'velocity without loss of clarity',",
-    "  riskModel: ['migration', 'team focus', 'delivery confidence'],",
-    "  decisionPath: mapStakeholders(sessions),",
-    "});",
-    "",
-    "handoff.createSystem({",
-    "  narrative: brandDNA.language,",
-    "  proof: decisionPath.evidence,",
-    "  implementation: 'component-ready direction',",
-    "});",
-  ];
+function EditorSurface({
+  activeStep,
+  activeTab,
+  activeProcess,
+  onTabChange,
+}: {
+  activeStep: number;
+  activeTab: string;
+  activeProcess: (typeof processSteps)[number];
+  onTabChange: (tab: string) => void;
+}) {
+  const codeByTab: Record<string, string[]> = {
+    "brand-dna.ts": [
+      "brandDNA.define({",
+      "  audience: 'CTO + engineering leads',",
+      "  promise: 'velocity without loss of clarity',",
+      "  riskModel: ['migration', 'team focus', 'delivery confidence'],",
+      "  currentFocus: '" + activeProcess.label + "',",
+      "});",
+      "",
+      "process.lock('" + activeProcess.meta + "');",
+    ],
+    "sessions.md": [
+      "# Stakeholder synthesis",
+      "- Product meaning before interface decisions",
+      "- Executive priorities translated into buyer proof",
+      "- Engineering constraints surfaced before page logic",
+      "- Active lens: " + activeProcess.focus,
+    ],
+    "decision-path.json": [
+      "{",
+      '  "buyer": "CTO / engineering lead",',
+      '  "activeStage": "' + activeProcess.label + '",',
+      '  "evidence": ["clarity", "velocity", "handoff confidence"],',
+      '  "nextAction": "turn alignment into page architecture"',
+      "}",
+    ],
+  };
+  const codeLines = codeByTab[activeTab];
 
   return (
     <div className="relative overflow-hidden rounded-[32px] border border-black/10 bg-[#eeeeeb]/82 shadow-[0_42px_120px_rgba(30,38,42,0.12)] backdrop-blur-2xl lg:rounded-[42px]">
       <div className="flex items-center justify-between border-b border-black/8 px-5 py-5 text-[13px] text-black/36 sm:px-7">
         <div className="flex items-center gap-2">
-          <span className="h-3 w-3 rounded-full bg-[#f0645b]" />
-          <span className="h-3 w-3 rounded-full bg-[#efbd45]" />
-          <span className="h-3 w-3 rounded-full bg-[#67bf6b]" />
+          <span className="h-3 w-3 rounded-full bg-[#7a5cff]" />
+          <span className="h-3 w-3 rounded-full bg-[#b8a8ff]" />
+          <span className="h-3 w-3 rounded-full bg-[#7fc7ff]" />
         </div>
         <div className="hidden items-center gap-2 sm:flex">
           <span className="h-3 w-3 rounded-full border border-black/18" />
@@ -620,22 +670,34 @@ function EditorSurface() {
       <div className="grid min-h-[560px] lg:grid-cols-[280px_minmax(0,1fr)_340px]">
         <aside className="hidden border-r border-black/8 bg-white/28 p-6 lg:block">
           <div className="mb-5 flex items-center gap-2 text-[12px] font-medium uppercase tracking-[0.14em] text-black/36">
-            <span className="h-2 w-2 rounded-full bg-[#ff4b24]" />
+            <span className="h-2 w-2 rounded-full bg-[#7a5cff]" />
             Sessions
           </div>
           {["Leadership priorities", "Buyer objections", "Engineering constraints", "Migration anxieties", "Proof hierarchy"].map((item, index) => (
-            <div
+            <button
               key={item}
-              className={index === 1 ? "mb-2 rounded-[14px] bg-white px-4 py-3 text-[14px] text-black/70 shadow-[0_12px_30px_rgba(0,0,0,0.05)]" : "mb-2 rounded-[14px] px-4 py-3 text-[14px] text-black/34"}
+              className={index === activeStep ? "mb-2 w-full rounded-[14px] bg-white px-4 py-3 text-left text-[14px] text-black/70 shadow-[0_12px_30px_rgba(0,0,0,0.05)] transition hover:-translate-y-0.5" : "mb-2 w-full rounded-[14px] px-4 py-3 text-left text-[14px] text-black/34 transition hover:bg-white/40 hover:text-black/62"}
+              type="button"
             >
               {item}
-            </div>
+            </button>
           ))}
         </aside>
 
         <div className="relative border-r border-black/8 p-5 sm:p-7">
-          <div className="mb-6 flex items-center justify-between border-b border-black/8 pb-4 text-[13px] text-black/38">
-            <span>brand-dna.ts</span>
+          <div className="mb-6 flex flex-col justify-between gap-4 border-b border-black/8 pb-4 text-[13px] text-black/38 sm:flex-row sm:items-center">
+            <div className="flex flex-wrap gap-2">
+              {editorTabs.map((tab) => (
+                <button
+                  key={tab}
+                  className={tab === activeTab ? "rounded-full bg-[#7a5cff] px-3 py-1.5 text-white shadow-[0_12px_26px_rgba(122,92,255,0.22)]" : "rounded-full bg-white/58 px-3 py-1.5 text-black/42 transition hover:bg-white hover:text-black/68"}
+                  type="button"
+                  onClick={() => onTabChange(tab)}
+                >
+                  {tab}
+                </button>
+              ))}
+            </div>
             <span>case-intro</span>
           </div>
           <div className="font-mono text-[13px] leading-[1.95] text-black/38 sm:text-[14px]">
@@ -651,12 +713,12 @@ function EditorSurface() {
 
           <div className="pointer-events-none absolute inset-x-0 bottom-0 h-56 bg-[linear-gradient(180deg,rgba(247,247,244,0),rgba(247,247,244,0.94)_70%)]" />
           <div className="absolute bottom-8 left-1/2 w-[min(520px,calc(100%-40px))] -translate-x-1/2 text-center">
-            <div className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-full border border-[#ff4b24]/25 bg-white/80 text-[#ff4b24] shadow-[0_18px_48px_rgba(255,75,36,0.12)]">
+            <div className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-full border border-[#7a5cff]/25 bg-white/80 text-[#7a5cff] shadow-[0_18px_48px_rgba(122,92,255,0.16)] transition duration-300 hover:scale-105">
               <Workflow size={26} strokeWidth={1.5} />
             </div>
-            <h3 className="mb-2 text-[24px] font-medium tracking-[-0.04em] text-[#282b2c]">A process layer before the interface layer</h3>
+            <h3 className="mb-2 text-[24px] font-medium tracking-[-0.04em] text-[#282b2c]">{activeProcess.label} before the interface layer</h3>
             <p className="mx-auto max-w-[470px] text-[14px] leading-[1.45] text-black/48">
-              Every screen inherited a shared strategic spine, so product, marketing and engineering could move faster without re-litigating the story.
+              {activeProcess.focus} Every screen inherited a shared strategic spine, so product, marketing and engineering could move faster.
             </p>
           </div>
         </div>
@@ -665,11 +727,11 @@ function EditorSurface() {
           <div className="mb-5 text-[12px] font-medium uppercase tracking-[0.14em] text-black/36">Preview</div>
           <div className="space-y-4">
             {[
-              ["Audience clarity", "CTOs and engineering leads"],
+              ["Active stage", activeProcess.label],
               ["Primary tension", "move faster without losing trust"],
-              ["System output", "narrative, IA and component direction"],
+              ["System output", activeProcess.focus],
             ].map(([label, value]) => (
-              <div key={label} className="rounded-[18px] border border-black/8 bg-white/56 p-4">
+              <div key={label} className="rounded-[18px] border border-black/8 bg-white/56 p-4 transition duration-300 hover:-translate-y-1 hover:bg-white">
                 <div className="mb-2 text-[11px] uppercase tracking-[0.14em] text-black/32">{label}</div>
                 <div className="text-[15px] leading-[1.25] tracking-[-0.02em] text-black/70">{value}</div>
               </div>
