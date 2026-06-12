@@ -151,7 +151,7 @@ function HeroSection() {
   const cursor = useHeroCursor();
 
   return (
-    <section className="relative isolate min-h-[100svh] overflow-hidden bg-[#eef3f5]">
+    <section className="hero-section relative isolate min-h-[100svh] overflow-hidden bg-[#eef3f5]">
       <ShaderBackground />
       <InteractiveGlassPanels cursor={cursor} />
       <div className="absolute inset-0 z-[3] bg-[linear-gradient(180deg,rgba(255,255,255,0)_0%,rgba(244,247,248,0.18)_54%,rgba(239,244,245,0.82)_100%)]" />
@@ -352,7 +352,7 @@ function DnaShader() {
   return (
     <div
       ref={mountRef}
-      className="pointer-events-none absolute right-[max(1.75rem,calc((100vw-1480px)/2+1.75rem))] top-0 z-[5] hidden h-screen w-[42vw] max-w-[620px] opacity-95 mix-blend-screen md:block"
+      className="dna-shader pointer-events-none absolute top-0 z-[5] hidden h-screen opacity-95 mix-blend-screen md:block"
       aria-hidden="true"
     />
   );
@@ -678,13 +678,54 @@ function ProcessTabs({
 }
 
 function TabProgressBorder() {
+  const svgRef = useRef<SVGSVGElement | null>(null);
+  const [box, setBox] = useState({ width: 220, height: 46 });
+
+  useEffect(() => {
+    const svg = svgRef.current;
+    const tab = svg?.parentElement;
+
+    if (!tab) {
+      return undefined;
+    }
+
+    const update = () => {
+      const rect = tab.getBoundingClientRect();
+      setBox({
+        width: Math.max(rect.width, 1),
+        height: Math.max(rect.height, 1),
+      });
+    };
+
+    update();
+    const observer = new ResizeObserver(update);
+    observer.observe(tab);
+
+    return () => observer.disconnect();
+  }, []);
+
+  const inset = 1;
+  const width = box.width;
+  const height = box.height;
+  const radius = Math.max(height / 2 - inset, 0);
+  const right = width - inset;
+  const bottom = height - inset;
+  const left = inset;
+  const top = inset;
+  const path = [
+    `M ${width / 2} ${top}`,
+    `H ${right - radius}`,
+    `A ${radius} ${radius} 0 0 1 ${right} ${height / 2}`,
+    `A ${radius} ${radius} 0 0 1 ${right - radius} ${bottom}`,
+    `H ${left + radius}`,
+    `A ${radius} ${radius} 0 0 1 ${left} ${height / 2}`,
+    `A ${radius} ${radius} 0 0 1 ${left + radius} ${top}`,
+    `H ${width / 2}`,
+  ].join(" ");
+
   return (
-    <svg className="process-tab-progress-ring" viewBox="0 0 100 46" preserveAspectRatio="none" aria-hidden="true">
-      <path
-        d="M50 1 H77 C89.2 1 99 10.8 99 23 C99 35.2 89.2 45 77 45 H23 C10.8 45 1 35.2 1 23 C1 10.8 10.8 1 23 1 H50"
-        fill="none"
-        pathLength={100}
-      />
+    <svg ref={svgRef} className="process-tab-progress-ring" viewBox={`0 0 ${width} ${height}`} aria-hidden="true">
+      <path d={path} fill="none" pathLength={100} />
     </svg>
   );
 }

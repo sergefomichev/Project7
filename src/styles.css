@@ -43,6 +43,32 @@ a {
     linear-gradient(112deg, #ffe5a8 0%, #f7ebdd 25%, #ddd8ff 45%, #c1ecff 68%, #7fc3f4 100%);
 }
 
+.hero-section::after {
+  position: absolute;
+  right: 0;
+  bottom: -1px;
+  left: 0;
+  z-index: 4;
+  height: 190px;
+  content: "";
+  background:
+    radial-gradient(120% 80% at 50% 100%, rgba(247, 247, 244, 1) 0%, rgba(247, 247, 244, 0.88) 38%, rgba(247, 247, 244, 0) 72%),
+    linear-gradient(180deg, rgba(247, 247, 244, 0) 0%, rgba(247, 247, 244, 0.94) 86%, #f7f7f4 100%);
+  pointer-events: none;
+}
+
+.dna-shader {
+  left: min(73vw, calc((100vw + min(1480px, 100vw)) / 2 - 300px));
+  width: clamp(360px, 34vw, 560px);
+}
+
+@media (max-width: 1180px) {
+  .dna-shader {
+    left: 57vw;
+    width: 390px;
+  }
+}
+
 .perspective-hero {
   perspective: 1200px;
   transform-style: preserve-3d;
@@ -75,9 +101,25 @@ a {
 }
 
 .align-process-section {
+  margin-top: -72px;
+  padding-top: 72px;
   animation: brandDnaReveal 1ms linear both;
   animation-timeline: view();
   animation-range: entry 0% entry 44%;
+}
+
+.align-process-section::before {
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  z-index: 0;
+  height: 180px;
+  content: "";
+  background:
+    radial-gradient(70% 120% at 50% 0%, rgba(255, 255, 255, 0.82), rgba(247, 247, 244, 0) 68%),
+    linear-gradient(180deg, rgba(238, 243, 245, 0.62), rgba(247, 247, 244, 0));
+  pointer-events: none;
 }
 
 .process-tab {
