@@ -564,14 +564,14 @@ function BrandDnaSection() {
 
       <div className="relative mx-auto max-w-[1480px] px-5 pb-24 pt-28 sm:px-6 sm:pb-32 sm:pt-32 lg:px-7 lg:pb-40">
         <div className="mx-auto mb-12 max-w-[850px] text-center">
-          <div className="mb-6 inline-flex items-center gap-2 rounded-[10px] border border-black/10 bg-white px-3 py-2 text-[14px] font-medium text-[#3c3d40] shadow-[0_10px_28px_rgba(30,30,30,0.08)]">
+          <div className="t-chip-reveal t-hover-lift mb-6 inline-flex items-center gap-2 rounded-[10px] border border-black/10 bg-white px-3 py-2 text-[14px] font-medium text-[#3c3d40] shadow-[0_10px_28px_rgba(30,30,30,0.08)]">
             <Timer size={16} weight="fill" className="text-black/32" />
-            Rapid Alignment
+            <span className="t-shimmer-text">Rapid Alignment</span>
           </div>
-          <h2 className="mx-auto max-w-[760px] text-[clamp(2.35rem,4.5vw,4.95rem)] font-semibold leading-[1.04] tracking-[-0.065em] text-[#2d2e31]">
+          <h2 className="t-title-reveal mx-auto max-w-[760px] text-[clamp(2.35rem,4.5vw,4.95rem)] font-semibold leading-[1.04] tracking-[-0.065em] text-[#2d2e31]">
             Make technical decisions faster before building screens
           </h2>
-          <p className="mx-auto mt-7 max-w-[760px] text-[17px] leading-[1.6] text-black/46 sm:text-[20px]">
+          <p className="t-subtitle-reveal mx-auto mt-7 max-w-[760px] text-[17px] leading-[1.6] text-black/46 sm:text-[20px]">
             Rapidly turn <span className="font-medium text-[#2d2e31]">Brand DNA</span>, <span className="font-medium text-[#2d2e31]">stakeholder sessions</span> and <span className="font-medium text-[#2d2e31]">engineering alignment</span> into a clear build path.
           </p>
         </div>
@@ -592,10 +592,10 @@ function ProcessTabs({
   onSelect: (index: number) => void;
 }) {
   return (
-    <div className="relative mx-auto mb-10 max-w-[760px] sm:mb-12">
+    <div className="t-tabs-reveal relative mx-auto mb-10 max-w-[760px] sm:mb-12">
       <div className="pointer-events-none absolute left-8 right-8 top-1/2 hidden h-px -translate-y-1/2 bg-black/10 md:block" />
       <div className="pointer-events-none absolute left-1/2 top-[calc(100%+2px)] hidden h-16 w-px -translate-x-1/2 bg-black/10 md:block" />
-      <div className="grid gap-3 md:grid-cols-3">
+      <div className="process-tabs-track grid gap-3 md:grid-cols-3" style={{ "--active-index": activeStep } as React.CSSProperties}>
         {processSteps.map((step, index) => {
           const isActive = index === activeStep;
           const isComplete = index < activeStep;
@@ -620,15 +620,13 @@ function ProcessTabs({
 }
 
 function StepStateIcon({ active, complete }: { active: boolean; complete: boolean }) {
-  if (active) {
-    return <SpinnerGap size={17} weight="fill" className="relative z-10 animate-spin text-[#2f66ff]" />;
-  }
-
-  if (complete) {
-    return <CheckCircle size={18} weight="fill" className="relative z-10 text-[#2fbf71]" />;
-  }
-
-  return <Circle size={17} weight="regular" className="relative z-10 text-black/24" />;
+  return (
+    <span className="t-step-icon relative z-10" data-state={active ? "active" : complete ? "complete" : "idle"}>
+      <Circle size={17} weight="regular" className="t-step-icon-idle text-black/24" />
+      <SpinnerGap size={17} weight="fill" className="t-step-icon-active text-[#2f66ff]" />
+      <CheckCircle size={18} weight="fill" className="t-step-icon-complete text-[#2fbf71]" />
+    </span>
+  );
 }
 
 function ProcessEditor({
@@ -639,7 +637,7 @@ function ProcessEditor({
   activeProcess: (typeof processSteps)[number];
 }) {
   return (
-    <div className="relative mx-auto max-w-[1050px]">
+    <div className="t-panel-shell relative mx-auto max-w-[1050px]">
       <div className="pointer-events-none absolute left-1/2 top-[-40px] hidden h-10 w-px -translate-x-1/2 bg-black/10 md:block" />
       <div className="overflow-hidden rounded-[28px] border border-black/10 bg-[#eeeeec] shadow-[0_36px_90px_rgba(30,33,36,0.12)]">
         <div className="flex items-center justify-between border-b border-black/10 px-5 py-5 text-[14px] text-black/34 sm:px-6">
@@ -655,9 +653,9 @@ function ProcessEditor({
         </div>
 
         <div className="grid bg-white/55 lg:grid-cols-[minmax(0,1.45fr)_minmax(320px,0.85fr)]">
-          <div className="min-h-[430px] border-b border-black/10 p-6 font-mono text-[13px] leading-[1.85] text-black/48 sm:p-8 sm:text-[14px] lg:border-b-0 lg:border-r">
+          <div key={`code-${activeStep}`} className="t-panel-slide min-h-[430px] border-b border-black/10 p-6 font-mono text-[13px] leading-[1.85] text-black/48 sm:p-8 sm:text-[14px] lg:border-b-0 lg:border-r">
             {activeProcess.code.map((line, index) => (
-              <div key={`${activeStep}-${line}-${index}`} className="grid grid-cols-[32px_minmax(0,1fr)] gap-5">
+              <div key={`${activeStep}-${line}-${index}`} className="t-code-line grid grid-cols-[32px_minmax(0,1fr)] gap-5" style={{ "--line-index": index } as React.CSSProperties}>
                 <span className="select-none text-right text-black/16">{index + 1}</span>
                 <span className={line.includes("import") || line.includes("export") || line.includes("const") ? "text-[#315dff]" : line.includes("'") || line.includes('"') ? "text-[#5472d8]" : line.includes("//") ? "text-black/24" : ""}>
                   {line || "\u00a0"}
@@ -667,20 +665,20 @@ function ProcessEditor({
           </div>
 
           <div className="flex min-h-[430px] items-center justify-center bg-white p-6">
-            <div className="w-full max-w-[360px] text-center">
-              <div className="mx-auto mb-7 flex h-16 w-16 items-center justify-center rounded-full bg-[#315dff] text-white shadow-[0_18px_40px_rgba(49,93,255,0.26)]">
+            <div key={`preview-${activeStep}`} className="t-panel-scale w-full max-w-[360px] text-center">
+              <div className="t-orb-pulse mx-auto mb-7 flex h-16 w-16 items-center justify-center rounded-full bg-[#315dff] text-white shadow-[0_18px_40px_rgba(49,93,255,0.26)]">
                 <FlowArrow size={32} weight="fill" />
               </div>
-              <h3 className="text-[24px] font-semibold tracking-[-0.04em] text-[#222326]">{activeProcess.previewTitle}</h3>
-              <p className="mx-auto mt-2 max-w-[300px] text-[15px] leading-[1.45] text-black/52">{activeProcess.previewSubtitle}</p>
+              <h3 className="t-text-swap text-[24px] font-semibold tracking-[-0.04em] text-[#222326]">{activeProcess.previewTitle}</h3>
+              <p className="t-text-swap mx-auto mt-2 max-w-[300px] text-[15px] leading-[1.45] text-black/52">{activeProcess.previewSubtitle}</p>
               <div className="mt-8 space-y-3">
-                {activeProcess.outputs.map((output) => (
-                  <div key={output} className="rounded-[12px] border border-black/10 bg-white px-4 py-3 text-[14px] font-medium text-black/62 shadow-[0_8px_20px_rgba(0,0,0,0.035)]">
+                {activeProcess.outputs.map((output, index) => (
+                  <div key={output} className="t-list-item rounded-[12px] border border-black/10 bg-white px-4 py-3 text-[14px] font-medium text-black/62 shadow-[0_8px_20px_rgba(0,0,0,0.035)]" style={{ "--line-index": index } as React.CSSProperties}>
                     {output}
                   </div>
                 ))}
               </div>
-              <button className="mt-6 w-full rounded-[12px] bg-[#315dff] px-5 py-3 text-[14px] font-semibold text-white shadow-[0_14px_32px_rgba(49,93,255,0.25)] transition hover:-translate-y-0.5 hover:bg-[#234de2]" type="button">
+              <button className="t-button-magnetic mt-6 w-full rounded-[12px] bg-[#315dff] px-5 py-3 text-[14px] font-semibold text-white shadow-[0_14px_32px_rgba(49,93,255,0.25)] transition hover:-translate-y-0.5 hover:bg-[#234de2]" type="button">
                 Review alignment path
               </button>
             </div>
@@ -721,7 +719,7 @@ function ProcessOutputs({ activeProcess }: { activeProcess: (typeof processSteps
           const Icon = card.icon;
 
           return (
-            <div key={card.title} className="group text-center">
+            <div key={card.title} className="t-hover-lift group text-center">
               <div className="mx-auto mb-5 flex h-9 w-9 items-center justify-center rounded-full bg-white text-black/30 shadow-[0_8px_24px_rgba(0,0,0,0.06)] transition duration-300 group-hover:-translate-y-1 group-hover:shadow-[0_14px_32px_rgba(49,93,255,0.12)]">
                 <Icon size={20} weight="fill" className={card.tone} />
               </div>

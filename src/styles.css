@@ -23,6 +23,11 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   text-rendering: geometricPrecision;
+  --t-ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --t-ease-emphasized: cubic-bezier(0.16, 1, 0.3, 1);
+  --t-fast: 220ms;
+  --t-medium: 420ms;
+  --t-slow: 760ms;
 }
 
 button,
@@ -99,6 +104,36 @@ a {
     box-shadow 300ms ease;
 }
 
+.process-tabs-track {
+  position: relative;
+}
+
+.process-tabs-track::before {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 0;
+  display: none;
+  width: calc((100% - 24px) / 3);
+  content: "";
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.64);
+  box-shadow: 0 18px 44px rgba(35, 41, 50, 0.08);
+  transform: translateX(calc(var(--active-index) * (100% + 12px)));
+  transition: transform var(--t-slow) var(--t-ease-emphasized);
+}
+
+@media (min-width: 768px) {
+  .process-tabs-track::before {
+    display: block;
+  }
+}
+
+.process-tabs-track > .process-tab {
+  z-index: 1;
+}
+
 .process-tab:hover {
   transform: translateY(-2px);
   background: rgba(255, 255, 255, 0.78);
@@ -123,6 +158,110 @@ a {
   animation: processProgress 8s linear forwards;
 }
 
+.t-chip-reveal {
+  animation: tChipReveal 720ms var(--t-ease-emphasized) both;
+}
+
+.t-title-reveal {
+  animation: tTitleReveal 860ms 90ms var(--t-ease-emphasized) both;
+}
+
+.t-subtitle-reveal {
+  animation: tSubtitleReveal 760ms 190ms var(--t-ease-emphasized) both;
+}
+
+.t-tabs-reveal {
+  animation: tPanelReveal 760ms 260ms var(--t-ease-emphasized) both;
+}
+
+.t-panel-shell {
+  animation: tPanelReveal 900ms 340ms var(--t-ease-emphasized) both;
+}
+
+.t-panel-slide {
+  animation: tPanelSlide var(--t-slow) var(--t-ease-emphasized) both;
+}
+
+.t-panel-scale {
+  animation: tPanelScale var(--t-slow) var(--t-ease-emphasized) both;
+}
+
+.t-text-swap {
+  animation: tTextSwap 520ms var(--t-ease-out) both;
+}
+
+.t-code-line,
+.t-list-item {
+  animation: tLineIn 480ms var(--t-ease-out) both;
+  animation-delay: calc(var(--line-index) * 34ms);
+}
+
+.t-step-icon {
+  display: inline-grid;
+  width: 18px;
+  height: 18px;
+  place-items: center;
+}
+
+.t-step-icon > * {
+  grid-area: 1 / 1;
+  transform: scale(0.72) rotate(-18deg);
+  opacity: 0;
+  filter: blur(5px);
+  transition:
+    opacity var(--t-medium) var(--t-ease-emphasized),
+    transform var(--t-medium) var(--t-ease-emphasized),
+    filter var(--t-medium) var(--t-ease-emphasized);
+}
+
+.t-step-icon[data-state="idle"] .t-step-icon-idle,
+.t-step-icon[data-state="active"] .t-step-icon-active,
+.t-step-icon[data-state="complete"] .t-step-icon-complete {
+  transform: scale(1) rotate(0deg);
+  opacity: 1;
+  filter: blur(0);
+}
+
+.t-step-icon[data-state="complete"] .t-step-icon-complete {
+  animation: tSuccessPop 520ms var(--t-ease-emphasized) both;
+}
+
+.t-orb-pulse {
+  animation: tOrbPulse 2.8s ease-in-out infinite;
+}
+
+.t-hover-lift {
+  transition:
+    transform var(--t-medium) var(--t-ease-emphasized),
+    filter var(--t-medium) var(--t-ease-emphasized);
+}
+
+.t-hover-lift:hover {
+  transform: translateY(-4px);
+  filter: saturate(1.08);
+}
+
+.t-button-magnetic {
+  transition:
+    transform var(--t-medium) var(--t-ease-emphasized),
+    background-color var(--t-fast) ease,
+    box-shadow var(--t-medium) var(--t-ease-emphasized);
+}
+
+.t-button-magnetic:hover {
+  transform: translateY(-3px) scale(1.015);
+  box-shadow: 0 22px 46px rgba(49, 93, 255, 0.28);
+}
+
+.t-shimmer-text {
+  background: linear-gradient(90deg, #3c3d40 0%, #315dff 42%, #3c3d40 72%);
+  background-size: 220% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: tShimmer 4.5s ease-in-out infinite;
+}
+
 @keyframes processProgress {
   from {
     transform: scaleX(0);
@@ -130,6 +269,107 @@ a {
 
   to {
     transform: scaleX(1);
+  }
+}
+
+@keyframes tChipReveal {
+  from {
+    transform: translateY(16px) scale(0.96);
+    opacity: 0;
+    filter: blur(12px);
+  }
+}
+
+@keyframes tTitleReveal {
+  from {
+    transform: translateY(24px);
+    opacity: 0;
+    filter: blur(16px);
+  }
+}
+
+@keyframes tSubtitleReveal {
+  from {
+    transform: translateY(18px);
+    opacity: 0;
+    filter: blur(12px);
+  }
+}
+
+@keyframes tPanelReveal {
+  from {
+    transform: translateY(44px) scale(0.985);
+    opacity: 0;
+    filter: blur(18px);
+  }
+}
+
+@keyframes tPanelSlide {
+  from {
+    transform: translateX(-18px);
+    opacity: 0;
+    filter: blur(14px);
+  }
+}
+
+@keyframes tPanelScale {
+  from {
+    transform: scale(0.965);
+    opacity: 0;
+    filter: blur(16px);
+  }
+}
+
+@keyframes tTextSwap {
+  from {
+    transform: translateY(10px);
+    opacity: 0;
+    filter: blur(8px);
+  }
+}
+
+@keyframes tLineIn {
+  from {
+    transform: translateY(6px);
+    opacity: 0;
+  }
+}
+
+@keyframes tSuccessPop {
+  0% {
+    transform: scale(0.5) rotate(-20deg);
+  }
+
+  62% {
+    transform: scale(1.18) rotate(3deg);
+  }
+
+  100% {
+    transform: scale(1) rotate(0);
+  }
+}
+
+@keyframes tOrbPulse {
+  0%,
+  100% {
+    transform: translateY(0) scale(1);
+    box-shadow: 0 18px 40px rgba(49, 93, 255, 0.26);
+  }
+
+  50% {
+    transform: translateY(-4px) scale(1.04);
+    box-shadow: 0 26px 60px rgba(49, 93, 255, 0.34);
+  }
+}
+
+@keyframes tShimmer {
+  0%,
+  55% {
+    background-position: 130% 0;
+  }
+
+  100% {
+    background-position: -70% 0;
   }
 }
 
@@ -176,5 +416,25 @@ a {
   .process-tab-progress {
     animation: none;
     transform: scaleX(1);
+  }
+
+  .t-chip-reveal,
+  .t-title-reveal,
+  .t-subtitle-reveal,
+  .t-tabs-reveal,
+  .t-panel-shell,
+  .t-panel-slide,
+  .t-panel-scale,
+  .t-text-swap,
+  .t-code-line,
+  .t-list-item,
+  .t-step-icon[data-state="complete"] .t-step-icon-complete,
+  .t-orb-pulse,
+  .t-shimmer-text {
+    animation: none;
+  }
+
+  .t-step-icon > * {
+    filter: none;
   }
 }
