@@ -134,6 +134,83 @@ a {
   z-index: 1;
 }
 
+.tab-chevron {
+  position: absolute;
+  top: 50%;
+  z-index: 3;
+  display: none;
+  width: 24px;
+  height: 24px;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 999px;
+  color: rgba(0, 0, 0, 0.22);
+  background: rgba(247, 247, 244, 0.82);
+  transform: translate(-50%, -50%);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7);
+}
+
+.tab-chevron-left {
+  left: calc((100% - 24px) / 3 + 6px);
+}
+
+.tab-chevron-right {
+  left: calc(((100% - 24px) / 3) * 2 + 18px);
+}
+
+@media (min-width: 768px) {
+  .tab-chevron {
+    display: inline-flex;
+  }
+}
+
+.process-connector {
+  position: absolute;
+  right: 44px;
+  bottom: -70px;
+  left: 44px;
+  z-index: 0;
+  display: none;
+  height: 72px;
+  border-right: 1px solid rgba(0, 0, 0, 0.09);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.09);
+  border-left: 1px solid rgba(0, 0, 0, 0.09);
+  border-bottom-right-radius: 18px;
+  border-bottom-left-radius: 18px;
+}
+
+.process-connector::before {
+  position: absolute;
+  bottom: -24px;
+  left: 50%;
+  width: 1px;
+  height: 24px;
+  content: "";
+  background: rgba(0, 0, 0, 0.09);
+}
+
+.process-connector::after {
+  position: absolute;
+  bottom: -28px;
+  left: 50%;
+  width: 7px;
+  height: 7px;
+  content: "";
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.1);
+  box-shadow:
+    -50vw -53px 0 -2px rgba(0, 0, 0, 0.08),
+    50vw -53px 0 -2px rgba(0, 0, 0, 0.08);
+  transform: translateX(-50%);
+}
+
+@media (min-width: 768px) {
+  .process-connector {
+    display: block;
+  }
+}
+
 .process-tab:hover {
   transform: translateY(-2px);
   background: rgba(255, 255, 255, 0.78);
@@ -149,13 +226,25 @@ a {
     inset 0 1px 0 rgba(255, 255, 255, 0.86);
 }
 
-.process-tab-progress {
+.process-tab-border-progress {
   position: absolute;
-  inset: auto 0 0 0;
-  height: 2px;
-  background: #315dff;
-  transform-origin: left center;
-  animation: processProgress 8s linear forwards;
+  inset: 0;
+  z-index: 2;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  pointer-events: none;
+}
+
+.process-tab-border-progress path {
+  stroke: #315dff;
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 100;
+  stroke-dashoffset: 100;
+  vector-effect: non-scaling-stroke;
+  animation: processBorderProgress 8s linear forwards;
 }
 
 .t-chip-reveal {
@@ -262,14 +351,20 @@ a {
   animation: tShimmer 4.5s ease-in-out infinite;
 }
 
-@keyframes processProgress {
+@keyframes processBorderProgress {
   from {
-    transform: scaleX(0);
+    stroke-dashoffset: 100;
   }
 
   to {
-    transform: scaleX(1);
+    stroke-dashoffset: 0;
   }
+}
+
+.code-line-number {
+  color: rgba(0, 0, 0, 0.16);
+  padding-right: 12px;
+  border-right: 1px solid rgba(0, 0, 0, 0.04);
 }
 
 @keyframes tChipReveal {
@@ -413,9 +508,9 @@ a {
     animation: none;
   }
 
-  .process-tab-progress {
+  .process-tab-border-progress path {
     animation: none;
-    transform: scaleX(1);
+    stroke-dashoffset: 0;
   }
 
   .t-chip-reveal,

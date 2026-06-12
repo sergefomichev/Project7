@@ -1,6 +1,7 @@
 import { ArrowRight, ChevronDown, Menu, Star } from "lucide-react";
 import {
   BracketsCurly,
+  CaretRight,
   CheckCircle,
   Circle,
   FlowArrow,
@@ -558,8 +559,8 @@ function BrandDnaSection() {
 
   return (
     <section className="align-process-section relative z-10 overflow-hidden bg-[#f7f7f4] text-[#2c2d2f]">
-      <div className="pointer-events-none absolute inset-y-0 left-[13vw] w-px bg-black/[0.06]" />
-      <div className="pointer-events-none absolute inset-y-0 right-[13vw] w-px bg-black/[0.06]" />
+      <div className="pointer-events-none absolute inset-y-0 left-[max(1.25rem,calc((100vw-1480px)/2+1.75rem))] w-px bg-black/[0.06]" />
+      <div className="pointer-events-none absolute inset-y-0 right-[max(1.25rem,calc((100vw-1480px)/2+1.75rem))] w-px bg-black/[0.06]" />
       <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-black/[0.06]" />
 
       <div className="relative mx-auto max-w-[1480px] px-5 pb-24 pt-28 sm:px-6 sm:pb-32 sm:pt-32 lg:px-7 lg:pb-40">
@@ -592,10 +593,15 @@ function ProcessTabs({
   onSelect: (index: number) => void;
 }) {
   return (
-    <div className="t-tabs-reveal relative mx-auto mb-10 max-w-[760px] sm:mb-12">
-      <div className="pointer-events-none absolute left-8 right-8 top-1/2 hidden h-px -translate-y-1/2 bg-black/10 md:block" />
-      <div className="pointer-events-none absolute left-1/2 top-[calc(100%+2px)] hidden h-16 w-px -translate-x-1/2 bg-black/10 md:block" />
+    <div className="t-tabs-reveal relative mx-auto mb-20 max-w-[760px] sm:mb-24">
+      <div className="process-connector" aria-hidden="true" />
       <div className="process-tabs-track grid gap-3 md:grid-cols-3" style={{ "--active-index": activeStep } as React.CSSProperties}>
+        <span className="tab-chevron tab-chevron-left" aria-hidden="true">
+          <CaretRight size={13} weight="regular" />
+        </span>
+        <span className="tab-chevron tab-chevron-right" aria-hidden="true">
+          <CaretRight size={13} weight="regular" />
+        </span>
         {processSteps.map((step, index) => {
           const isActive = index === activeStep;
           const isComplete = index < activeStep;
@@ -610,7 +616,7 @@ function ProcessTabs({
             >
               <StepStateIcon active={isActive} complete={isComplete} />
               <span className="relative z-10 truncate">{step.label}</span>
-              {isActive ? <span key={activeStep} className="process-tab-progress" /> : null}
+              {isActive ? <TabProgressBorder key={activeStep} /> : null}
             </button>
           );
         })}
@@ -619,11 +625,23 @@ function ProcessTabs({
   );
 }
 
+function TabProgressBorder() {
+  return (
+    <svg className="process-tab-border-progress" viewBox="0 0 100 46" preserveAspectRatio="none" aria-hidden="true">
+      <path
+        d="M50 1 H77 Q99 1 99 23 Q99 45 77 45 H23 Q1 45 1 23 Q1 1 23 1 H50"
+        fill="none"
+        pathLength={100}
+      />
+    </svg>
+  );
+}
+
 function StepStateIcon({ active, complete }: { active: boolean; complete: boolean }) {
   return (
     <span className="t-step-icon relative z-10" data-state={active ? "active" : complete ? "complete" : "idle"}>
       <Circle size={17} weight="regular" className="t-step-icon-idle text-black/24" />
-      <SpinnerGap size={17} weight="fill" className="t-step-icon-active text-[#2f66ff]" />
+      <SpinnerGap size={17} weight="regular" className="t-step-icon-active text-[#2f66ff]" />
       <CheckCircle size={18} weight="fill" className="t-step-icon-complete text-[#2fbf71]" />
     </span>
   );
@@ -640,13 +658,13 @@ function ProcessEditor({
     <div className="t-panel-shell relative mx-auto max-w-[1050px]">
       <div className="pointer-events-none absolute left-1/2 top-[-40px] hidden h-10 w-px -translate-x-1/2 bg-black/10 md:block" />
       <div className="overflow-hidden rounded-[28px] border border-black/10 bg-[#eeeeec] shadow-[0_36px_90px_rgba(30,33,36,0.12)]">
-        <div className="flex items-center justify-between border-b border-black/10 px-5 py-5 text-[14px] text-black/34 sm:px-6">
-          <div className="flex items-center gap-2">
+        <div className="grid items-center border-b border-black/10 text-[14px] text-black/34 lg:grid-cols-[minmax(0,1.45fr)_minmax(320px,0.85fr)]">
+          <div className="flex items-center gap-2 px-5 py-5 sm:px-6">
             <BracketsCurly size={16} weight="fill" className="text-[#2f66ff]" />
             <span className="font-mono">{activeProcess.file}</span>
             <span className="h-1.5 w-1.5 rounded-full bg-black/35" />
           </div>
-          <div className="hidden items-center gap-2 border-l border-black/10 pl-7 sm:flex">
+          <div className="hidden items-center gap-2 border-l border-black/10 px-5 py-5 sm:flex sm:px-6">
             <Circle size={13} weight="regular" className="text-black/24" />
             <span className="font-mono">preview</span>
           </div>
@@ -656,7 +674,7 @@ function ProcessEditor({
           <div key={`code-${activeStep}`} className="t-panel-slide min-h-[430px] border-b border-black/10 p-6 font-mono text-[13px] leading-[1.85] text-black/48 sm:p-8 sm:text-[14px] lg:border-b-0 lg:border-r">
             {activeProcess.code.map((line, index) => (
               <div key={`${activeStep}-${line}-${index}`} className="t-code-line grid grid-cols-[32px_minmax(0,1fr)] gap-5" style={{ "--line-index": index } as React.CSSProperties}>
-                <span className="select-none text-right text-black/16">{index + 1}</span>
+                <span className="code-line-number select-none text-right">{index + 1}</span>
                 <span className={line.includes("import") || line.includes("export") || line.includes("const") ? "text-[#315dff]" : line.includes("'") || line.includes('"') ? "text-[#5472d8]" : line.includes("//") ? "text-black/24" : ""}>
                   {line || "\u00a0"}
                 </span>
