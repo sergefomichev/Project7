@@ -58,14 +58,15 @@ a {
 }
 
 .dna-shader {
-  left: min(73vw, calc((100vw + min(1480px, 100vw)) / 2 - 300px));
-  width: clamp(360px, 34vw, 560px);
+  left: clamp(55vw, calc(50vw + min(1480px, 100vw) * 0.18), 68vw);
+  width: clamp(300px, 30vw, 520px);
+  transform: translateX(-50%);
 }
 
 @media (max-width: 1180px) {
   .dna-shader {
-    left: 57vw;
-    width: 390px;
+    left: clamp(58vw, 66vw, 70vw);
+    width: clamp(260px, 31vw, 360px);
   }
 }
 
@@ -101,8 +102,6 @@ a {
 }
 
 .align-process-section {
-  margin-top: -72px;
-  padding-top: 72px;
   animation: brandDnaReveal 1ms linear both;
   animation-timeline: view();
   animation-range: entry 0% entry 44%;

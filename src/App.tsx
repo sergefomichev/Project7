@@ -611,7 +611,7 @@ function BrandDnaSection() {
       <div className="pointer-events-none absolute inset-y-0 right-[max(1.25rem,calc((100vw-1480px)/2+1.75rem))] w-px bg-black/[0.06]" />
       <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-black/[0.06]" />
 
-      <div className="relative mx-auto max-w-[1480px] px-5 pb-24 pt-28 sm:px-6 sm:pb-32 sm:pt-32 lg:px-7 lg:pb-40">
+      <div className="relative mx-auto max-w-[1480px] px-5 pb-24 pt-[120px] sm:px-6 sm:pb-32 lg:px-7 lg:pb-40">
         <div className="mx-auto mb-12 max-w-[980px] text-center">
           <div className="t-chip-reveal t-hover-lift mb-6 inline-flex items-center gap-2 rounded-[10px] border border-black/10 bg-white px-3 py-2 text-[14px] font-medium text-[#3c3d40] shadow-[0_10px_28px_rgba(30,30,30,0.08)]">
             <Timer size={16} weight="fill" className="text-black/32" />
