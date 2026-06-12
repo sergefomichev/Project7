@@ -30,6 +30,12 @@ body {
   --t-slow: 760ms;
 }
 
+@property --process-angle {
+  syntax: "<angle>";
+  inherits: false;
+  initial-value: 0deg;
+}
+
 button,
 a {
   -webkit-tap-highlight-color: transparent;
@@ -87,7 +93,7 @@ a {
   align-items: center;
   justify-content: center;
   gap: 10px;
-  overflow: hidden;
+  overflow: visible;
   border: 1px solid rgba(0, 0, 0, 0.1);
   border-radius: 999px;
   background: rgba(255, 255, 255, 0.42);
@@ -226,24 +232,22 @@ a {
     inset 0 1px 0 rgba(255, 255, 255, 0.86);
 }
 
-.process-tab-border-progress {
+.process-tab-progress-ring {
   position: absolute;
   inset: -1px;
   z-index: 2;
-  width: calc(100% + 2px);
-  height: calc(100% + 2px);
-  overflow: visible;
+  border-radius: inherit;
+  padding: 1.5px;
+  background: conic-gradient(from -90deg, #315dff var(--process-angle), transparent 0deg);
+  mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  mask-composite: exclude;
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
   pointer-events: none;
-}
-
-.process-tab-border-progress path {
-  stroke: #315dff;
-  stroke-width: 1.25;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-  stroke-dasharray: 100;
-  stroke-dashoffset: 100;
-  vector-effect: non-scaling-stroke;
   animation: processBorderProgress 8s linear forwards;
 }
 
@@ -269,6 +273,35 @@ a {
 
 .process-editor-inner {
   isolation: isolate;
+}
+
+.process-editor-stem {
+  position: absolute;
+  top: -22px;
+  left: 50%;
+  display: none;
+  width: 1px;
+  height: 18px;
+  background: rgba(0, 0, 0, 0.1);
+  transform: translateX(-50%);
+}
+
+.process-editor-stem::after {
+  position: absolute;
+  bottom: -7px;
+  left: 50%;
+  width: 7px;
+  height: 7px;
+  content: "";
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.12);
+  transform: translateX(-50%);
+}
+
+@media (min-width: 768px) {
+  .process-editor-stem {
+    display: block;
+  }
 }
 
 .t-panel-slide {
@@ -357,11 +390,11 @@ a {
 
 @keyframes processBorderProgress {
   from {
-    stroke-dashoffset: 100;
+    --process-angle: 0deg;
   }
 
   to {
-    stroke-dashoffset: 0;
+    --process-angle: 360deg;
   }
 }
 
@@ -369,6 +402,26 @@ a {
   color: rgba(0, 0, 0, 0.16);
   padding-right: 12px;
   border-right: 1px solid rgba(0, 0, 0, 0.04);
+}
+
+.code-token-base {
+  color: rgba(42, 45, 49, 0.5);
+}
+
+.code-token-keyword {
+  color: #315dff;
+}
+
+.code-token-declaration {
+  color: #7657d8;
+}
+
+.code-token-string {
+  color: #2c8c6f;
+}
+
+.code-token-property {
+  color: #9a5d2f;
 }
 
 @keyframes tChipReveal {
@@ -512,9 +565,9 @@ a {
     animation: none;
   }
 
-  .process-tab-border-progress path {
+  .process-tab-progress-ring {
     animation: none;
-    stroke-dashoffset: 0;
+    --process-angle: 360deg;
   }
 
   .t-chip-reveal,

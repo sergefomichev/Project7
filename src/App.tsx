@@ -498,13 +498,30 @@ const processSteps = [
     file: "brand-dna.ts",
     code: [
       "import { StakeholderMap } from '@trusted/process';",
+      "import { defineBrandDNA } from '@trusted/strategy';",
+      "",
+      "type Buyer = 'CTO' | 'VP Engineering' | 'Product Lead';",
       "",
       "export const brandDNA = defineBrandDNA({",
-      "  audience: 'CTO + engineering leads',",
+      "  audience: ['CTO', 'engineering leads'] satisfies Buyer[],",
       "  promise: 'clarity before velocity',",
-      "  tensions: ['migration risk', 'team focus', 'delivery confidence'],",
-      "  language: StakeholderMap.fromSessions(),",
+      "  category: 'business-first technical rebuild',",
+      "  tensions: [",
+      "    'migration risk',",
+      "    'team focus',",
+      "    'delivery confidence',",
+      "  ],",
+      "  proof: StakeholderMap.fromSessions({",
+      "    source: 'leadership interviews',",
+      "    confidence: 0.92,",
+      "  }),",
+      "  language: {",
+      "    avoid: ['cosmetic redesign', 'generic refresh'],",
+      "    emphasize: ['decision clarity', 'engineering alignment'],",
+      "  },",
       "});",
+      "",
+      "export const brandDecision = brandDNA.toDecisionFrame();",
     ],
     previewTitle: "Strategic spine",
     previewSubtitle: "Shared language for product, leadership and engineering.",
@@ -515,12 +532,31 @@ const processSteps = [
     detail: "Turn interviews into a decision path that shows what technical buyers need to see, believe and approve.",
     file: "decision-path.tsx",
     code: [
+      "import { createDecisionPath } from '@trusted/strategy';",
+      "",
       "const path = createDecisionPath({",
       "  buyer: 'engineering-led committee',",
       "  entry: 'problem clarity',",
-      "  validation: ['technical proof', 'implementation scope'],",
+      "  validation: [",
+      "    'technical proof',",
+      "    'implementation scope',",
+      "    'delivery sequencing',",
+      "  ],",
       "  approval: 'risk removed before redesign begins',",
+      "  checkpoints: {",
+      "    cto: 'architecture confidence',",
+      "    product: 'message-market fit',",
+      "    finance: 'delivery risk reduced',",
+      "  },",
       "});",
+      "",
+      "const stakeholderRoute = path.map((stage) => ({",
+      "  ...stage,",
+      "  evidence: stage.questions.flatMap(findProof),",
+      "  owner: assignDecisionOwner(stage),",
+      "}));",
+      "",
+      "export const approvalMap = stakeholderRoute.toApprovalMap();",
     ],
     previewTitle: "Decision route",
     previewSubtitle: "A clear path from stakeholder doubt to shared commitment.",
@@ -531,13 +567,25 @@ const processSteps = [
     detail: "Convert alignment into page architecture, content states and implementation-ready component direction.",
     file: "handoff-system.ts",
     code: [
+      "import { buildExecutionSystem } from '@trusted/handoff';",
+      "",
       "export function buildExecutionSystem(input) {",
       "  return {",
       "    pages: input.decisionPath.toArchitecture(),",
       "    components: input.proof.toReusableBlocks(),",
+      "    content: input.brandDNA.toMessagingSystem(),",
+      "    risks: input.stakeholders.toDecisionRisks(),",
+      "    milestones: [",
+      "      'strategy lock',",
+      "      'page architecture',",
+      "      'component direction',",
+      "      'engineering handoff',",
+      "    ],",
       "    handoff: 'ready for engineering alignment',",
       "  };",
       "}",
+      "",
+      "export const system = buildExecutionSystem(alignmentInput);",
     ],
     previewTitle: "Execution-ready system",
     previewSubtitle: "Strategy becomes page logic, components and delivery focus.",
@@ -564,19 +612,19 @@ function BrandDnaSection() {
       <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-black/[0.06]" />
 
       <div className="relative mx-auto max-w-[1480px] px-5 pb-24 pt-28 sm:px-6 sm:pb-32 sm:pt-32 lg:px-7 lg:pb-40">
-        <div className="mx-auto mb-12 max-w-[850px] text-center">
+        <div className="mx-auto mb-12 max-w-[980px] text-center">
           <div className="t-chip-reveal t-hover-lift mb-6 inline-flex items-center gap-2 rounded-[10px] border border-black/10 bg-white px-3 py-2 text-[14px] font-medium text-[#3c3d40] shadow-[0_10px_28px_rgba(30,30,30,0.08)]">
             <Timer size={16} weight="fill" className="text-black/32" />
             <span className="t-shimmer-text">Rapid Alignment</span>
           </div>
-          <h2 className="t-title-reveal mx-auto max-w-[760px] text-[clamp(2.35rem,4.5vw,4.95rem)] font-normal leading-[1.04] tracking-[-0.065em] text-[#2d2e31]">
+          <h2 className="t-title-reveal mx-auto max-w-[960px] text-[clamp(2.35rem,4.35vw,4.8rem)] font-normal leading-[1.04] tracking-[-0.065em] text-[#2d2e31]">
             Make technical decisions faster before building screens
           </h2>
-          <p className="t-subtitle-reveal mx-auto mt-7 max-w-[760px] text-[17px] leading-[1.6] text-black/44 sm:text-[20px]">
+          <p className="t-subtitle-reveal mx-auto mt-7 max-w-[760px] text-[17px] leading-[1.6] text-black/28 sm:text-[20px]">
             <span>Rapidly turn </span>
-            <span className="font-medium text-[#2d2e31]">Brand DNA</span>
+            <span className="font-medium text-[#252628]">Brand DNA</span>
             <span>, stakeholder sessions and </span>
-            <span className="font-medium text-[#2d2e31]">engineering alignment</span>
+            <span className="font-medium text-[#252628]">engineering alignment</span>
             <span> into a clear build path.</span>
           </p>
         </div>
@@ -620,24 +668,12 @@ function ProcessTabs({
             >
               <StepStateIcon active={isActive} complete={isComplete} />
               <span className="relative z-10 truncate">{step.label}</span>
-              {isActive ? <TabProgressBorder key={activeStep} /> : null}
+              {isActive ? <span key={activeStep} className="process-tab-progress-ring" aria-hidden="true" /> : null}
             </button>
           );
         })}
       </div>
     </div>
-  );
-}
-
-function TabProgressBorder() {
-  return (
-    <svg className="process-tab-border-progress" viewBox="0 0 100 46" preserveAspectRatio="none" aria-hidden="true">
-      <path
-        d="M50 1.5 H77 Q98.5 1.5 98.5 23 Q98.5 44.5 77 44.5 H23 Q1.5 44.5 1.5 23 Q1.5 1.5 23 1.5 H50"
-        fill="none"
-        pathLength={100}
-      />
-    </svg>
   );
 }
 
@@ -651,6 +687,32 @@ function StepStateIcon({ active, complete }: { active: boolean; complete: boolea
   );
 }
 
+function getCodeLineClass(line: string) {
+  const trimmed = line.trim();
+
+  if (!trimmed) {
+    return "";
+  }
+
+  if (trimmed.startsWith("import") || trimmed.startsWith("export") || trimmed.startsWith("type")) {
+    return "code-token-keyword";
+  }
+
+  if (trimmed.startsWith("const") || trimmed.startsWith("return")) {
+    return "code-token-declaration";
+  }
+
+  if (line.includes("'") || line.includes('"')) {
+    return "code-token-string";
+  }
+
+  if (line.includes(":") || line.includes("=>")) {
+    return "code-token-property";
+  }
+
+  return "code-token-base";
+}
+
 function ProcessEditor({
   activeStep,
   activeProcess,
@@ -659,11 +721,11 @@ function ProcessEditor({
   activeProcess: (typeof processSteps)[number];
 }) {
   return (
-    <div className="t-panel-shell relative mx-auto max-w-[1050px]">
-      <div className="pointer-events-none absolute left-1/2 top-[-22px] hidden h-6 w-px -translate-x-1/2 bg-black/10 md:block" />
+    <div className="t-panel-shell relative mx-auto max-w-[1220px]">
+      <div className="process-editor-stem" aria-hidden="true" />
       <div className="overflow-hidden rounded-[28px] border border-black/10 bg-[#eeeeec] shadow-[0_36px_90px_rgba(30,33,36,0.12)]">
         <div className="border-b border-black/10 bg-[#eeeeec] px-2.5 sm:px-3">
-          <div className="grid items-center text-[14px] text-black/34 lg:grid-cols-[minmax(0,1.45fr)_minmax(320px,0.85fr)]">
+          <div className="grid items-center text-[14px] text-black/34 lg:grid-cols-[minmax(0,1.55fr)_minmax(320px,0.75fr)]">
             <div className="flex items-center gap-2 px-3 py-5 sm:px-4">
               <BracketsCurly size={16} weight="fill" className="text-[#2f66ff]" />
               <span className="font-mono">{activeProcess.file}</span>
@@ -677,19 +739,19 @@ function ProcessEditor({
         </div>
 
         <div className="bg-[#eeeeec] p-2.5 sm:p-3">
-          <div className="process-editor-inner grid overflow-hidden rounded-[22px] bg-white shadow-[0_22px_70px_rgba(31,35,40,0.11)] lg:grid-cols-[minmax(0,1.45fr)_minmax(320px,0.85fr)]">
-            <div key={`code-${activeStep}`} className="t-panel-slide min-h-[410px] border-b border-black/10 p-6 font-mono text-[13px] leading-[1.85] text-black/48 sm:p-8 sm:text-[14px] lg:border-b-0 lg:border-r">
+          <div className="process-editor-inner grid overflow-hidden rounded-[22px] bg-white shadow-[0_22px_70px_rgba(31,35,40,0.11)] lg:grid-cols-[minmax(0,1.55fr)_minmax(320px,0.75fr)]">
+            <div key={`code-${activeStep}`} className="t-panel-slide min-h-[720px] border-b border-black/10 p-6 font-mono text-[13px] leading-[1.78] text-black/48 sm:p-8 sm:text-[14px] lg:border-b-0 lg:border-r">
               {activeProcess.code.map((line, index) => (
                 <div key={`${activeStep}-${line}-${index}`} className="t-code-line grid grid-cols-[32px_minmax(0,1fr)] gap-5" style={{ "--line-index": index } as React.CSSProperties}>
                   <span className="code-line-number select-none text-right">{index + 1}</span>
-                  <span className={line.includes("import") || line.includes("export") || line.includes("const") ? "text-[#315dff]" : line.includes("'") || line.includes('"') ? "text-[#5472d8]" : line.includes("//") ? "text-black/24" : ""}>
+                  <span className={getCodeLineClass(line)}>
                     {line || "\u00a0"}
                   </span>
                 </div>
               ))}
             </div>
 
-            <div className="flex min-h-[410px] items-center justify-center bg-white p-6">
+            <div className="flex min-h-[720px] items-center justify-center bg-white p-6">
               <div key={`preview-${activeStep}`} className="t-panel-scale w-full max-w-[360px]">
                 <div className="mb-7 flex items-center gap-3">
                   <div className="t-orb-pulse flex h-12 w-12 items-center justify-center rounded-full bg-[#315dff] text-white shadow-[0_18px_40px_rgba(49,93,255,0.26)]">
@@ -704,9 +766,7 @@ function ProcessEditor({
                 <div className="mt-8 space-y-3">
                   {["CTO criteria", "Engineering proof", "Leadership confidence"].map((item, index) => (
                     <div key={item} className="t-list-item flex items-center gap-3 rounded-[14px] bg-[#f7f7f4] px-4 py-3 text-[14px] font-medium text-black/62 shadow-[inset_0_0_0_1px_rgba(0,0,0,0.06)]" style={{ "--line-index": index } as React.CSSProperties}>
-                      <span className="flex h-7 w-7 items-center justify-center rounded-full bg-white text-[#315dff] shadow-[0_8px_18px_rgba(0,0,0,0.06)]">
-                        <CheckCircle size={16} weight="fill" />
-                      </span>
+                      <CheckCircle size={28} weight="fill" className="shrink-0 text-[#315dff]" />
                       <span>{item}</span>
                     </div>
                   ))}
