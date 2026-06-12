@@ -668,12 +668,24 @@ function ProcessTabs({
             >
               <StepStateIcon active={isActive} complete={isComplete} />
               <span className="relative z-10 truncate">{step.label}</span>
-              {isActive ? <span key={activeStep} className="process-tab-progress-ring" aria-hidden="true" /> : null}
+              {isActive ? <TabProgressBorder key={activeStep} /> : null}
             </button>
           );
         })}
       </div>
     </div>
+  );
+}
+
+function TabProgressBorder() {
+  return (
+    <svg className="process-tab-progress-ring" viewBox="0 0 100 46" preserveAspectRatio="none" aria-hidden="true">
+      <path
+        d="M50 1 H77 C89.2 1 99 10.8 99 23 C99 35.2 89.2 45 77 45 H23 C10.8 45 1 35.2 1 23 C1 10.8 10.8 1 23 1 H50"
+        fill="none"
+        pathLength={100}
+      />
+    </svg>
   );
 }
 
@@ -818,7 +830,11 @@ function ProcessOutputs({ activeProcess }: { activeProcess: (typeof processSteps
 
   return (
     <div className="relative mx-auto mt-12 max-w-[1050px]">
-      <div className="pointer-events-none absolute left-1/2 top-[-48px] hidden h-12 w-px -translate-x-1/2 bg-black/10 md:block" />
+      <div className="output-connector" aria-hidden="true">
+        <span />
+        <span />
+        <span />
+      </div>
       <div className="grid gap-8 md:grid-cols-3">
         {outputCards.map((card) => {
           const Icon = card.icon;

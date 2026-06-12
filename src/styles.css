@@ -30,12 +30,6 @@ body {
   --t-slow: 760ms;
 }
 
-@property --process-angle {
-  syntax: "<angle>";
-  inherits: false;
-  initial-value: 0deg;
-}
-
 button,
 a {
   -webkit-tap-highlight-color: transparent;
@@ -236,18 +230,20 @@ a {
   position: absolute;
   inset: -1px;
   z-index: 2;
-  border-radius: inherit;
-  padding: 1.5px;
-  background: conic-gradient(from -90deg, #315dff var(--process-angle), transparent 0deg);
-  mask:
-    linear-gradient(#000 0 0) content-box,
-    linear-gradient(#000 0 0);
-  mask-composite: exclude;
-  -webkit-mask:
-    linear-gradient(#000 0 0) content-box,
-    linear-gradient(#000 0 0);
-  -webkit-mask-composite: xor;
+  width: calc(100% + 2px);
+  height: calc(100% + 2px);
+  overflow: visible;
   pointer-events: none;
+}
+
+.process-tab-progress-ring path {
+  stroke: #315dff;
+  stroke-width: 1.25;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 100;
+  stroke-dashoffset: 100;
+  vector-effect: non-scaling-stroke;
   animation: processBorderProgress 8s linear forwards;
 }
 
@@ -281,14 +277,24 @@ a {
   left: 50%;
   display: none;
   width: 1px;
-  height: 18px;
-  background: rgba(0, 0, 0, 0.1);
+  height: 22px;
+  background: transparent;
   transform: translateX(-50%);
+}
+
+.process-editor-stem::before {
+  position: absolute;
+  top: 7px;
+  bottom: 0;
+  left: 0;
+  width: 1px;
+  content: "";
+  background: rgba(0, 0, 0, 0.1);
 }
 
 .process-editor-stem::after {
   position: absolute;
-  bottom: -7px;
+  top: 0;
   left: 50%;
   width: 7px;
   height: 7px;
@@ -298,8 +304,74 @@ a {
   transform: translateX(-50%);
 }
 
+.output-connector {
+  position: absolute;
+  top: -48px;
+  right: calc(100% / 6);
+  left: calc(100% / 6);
+  display: none;
+  height: 48px;
+  border-top: 1px solid rgba(0, 0, 0, 0.09);
+  pointer-events: none;
+}
+
+.output-connector::before {
+  position: absolute;
+  top: -1px;
+  bottom: 0;
+  left: 50%;
+  width: 1px;
+  content: "";
+  background: rgba(0, 0, 0, 0.09);
+  transform: translateX(-50%);
+}
+
+.output-connector span {
+  position: absolute;
+  top: -4px;
+  width: 8px;
+  height: 52px;
+  transform: translateX(-50%);
+}
+
+.output-connector span::before {
+  position: absolute;
+  top: 4px;
+  bottom: 0;
+  left: 50%;
+  width: 1px;
+  content: "";
+  background: rgba(0, 0, 0, 0.09);
+  transform: translateX(-50%);
+}
+
+.output-connector span::after {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 7px;
+  height: 7px;
+  content: "";
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.12);
+  transform: translateX(-50%);
+}
+
+.output-connector span:nth-child(1) {
+  left: 0;
+}
+
+.output-connector span:nth-child(2) {
+  left: 50%;
+}
+
+.output-connector span:nth-child(3) {
+  left: 100%;
+}
+
 @media (min-width: 768px) {
-  .process-editor-stem {
+  .process-editor-stem,
+  .output-connector {
     display: block;
   }
 }
@@ -390,11 +462,11 @@ a {
 
 @keyframes processBorderProgress {
   from {
-    --process-angle: 0deg;
+    stroke-dashoffset: 100;
   }
 
   to {
-    --process-angle: 360deg;
+    stroke-dashoffset: 0;
   }
 }
 
@@ -567,7 +639,11 @@ a {
 
   .process-tab-progress-ring {
     animation: none;
-    --process-angle: 360deg;
+  }
+
+  .process-tab-progress-ring path {
+    animation: none;
+    stroke-dashoffset: 0;
   }
 
   .t-chip-reveal,
