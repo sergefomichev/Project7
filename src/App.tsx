@@ -1,15 +1,15 @@
+import { ArrowRight, ChevronDown, Menu, Star } from "lucide-react";
 import {
-  ArrowRight,
-  Boxes,
-  Braces,
-  ChevronDown,
-  Code2,
+  BracketsCurly,
+  CheckCircle,
+  Circle,
+  FlowArrow,
+  Gauge,
   GitBranch,
-  Menu,
-  MessageSquareText,
-  Star,
-  Workflow,
-} from "lucide-react";
+  SpinnerGap,
+  Timer,
+  UsersThree,
+} from "@phosphor-icons/react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import * as THREE from "three";
 
@@ -492,85 +492,99 @@ function HeroContent() {
 
 const processSteps = [
   {
-    icon: Boxes,
-    label: "Brand DNA",
-    meta: "FOUNDATION",
-    description: "Clarify the product promise, buying context and language system before interface work begins.",
+    label: "Define Brand DNA",
+    detail: "Extract the product promise, category language, buyer anxieties and proof hierarchy before UI starts.",
     file: "brand-dna.ts",
-    focus: "Product meaning, promise and category language.",
+    code: [
+      "import { StakeholderMap } from '@trusted/process';",
+      "",
+      "export const brandDNA = defineBrandDNA({",
+      "  audience: 'CTO + engineering leads',",
+      "  promise: 'clarity before velocity',",
+      "  tensions: ['migration risk', 'team focus', 'delivery confidence'],",
+      "  language: StakeholderMap.fromSessions(),",
+      "});",
+    ],
+    previewTitle: "Strategic spine",
+    previewSubtitle: "Shared language for product, leadership and engineering.",
+    outputs: ["Positioning logic", "Buyer anxieties", "Proof hierarchy"],
   },
   {
-    icon: MessageSquareText,
-    label: "Stakeholder Sessions",
-    meta: "ALIGNMENT",
-    description: "Map priorities across product, sales, leadership and engineering without flattening the nuance.",
-    file: "sessions.md",
-    focus: "Leadership priorities, buyer objections and internal constraints.",
+    label: "Align stakeholder path",
+    detail: "Turn interviews into a decision path that shows what technical buyers need to see, believe and approve.",
+    file: "decision-path.tsx",
+    code: [
+      "const path = createDecisionPath({",
+      "  buyer: 'engineering-led committee',",
+      "  entry: 'problem clarity',",
+      "  validation: ['technical proof', 'implementation scope'],",
+      "  approval: 'risk removed before redesign begins',",
+      "});",
+    ],
+    previewTitle: "Decision route",
+    previewSubtitle: "A clear path from stakeholder doubt to shared commitment.",
+    outputs: ["CTO evaluation path", "Internal objections", "Messaging order"],
   },
   {
-    icon: GitBranch,
-    label: "Decision Path",
-    meta: "CTO FLOW",
-    description: "Define how technical buyers evaluate proof, risk, implementation and time-to-value.",
-    file: "decision-path.json",
-    focus: "How CTOs move from skepticism to technical confidence.",
-  },
-  {
-    icon: Workflow,
-    label: "Engineering Handoff",
-    meta: "VELOCITY",
-    description: "Turn the narrative into reusable systems, page logic and execution-ready direction.",
-    file: "handoff.yaml",
-    focus: "Narrative, IA and component direction ready for execution.",
+    label: "Translate into execution",
+    detail: "Convert alignment into page architecture, content states and implementation-ready component direction.",
+    file: "handoff-system.ts",
+    code: [
+      "export function buildExecutionSystem(input) {",
+      "  return {",
+      "    pages: input.decisionPath.toArchitecture(),",
+      "    components: input.proof.toReusableBlocks(),",
+      "    handoff: 'ready for engineering alignment',",
+      "  };",
+      "}",
+    ],
+    previewTitle: "Execution-ready system",
+    previewSubtitle: "Strategy becomes page logic, components and delivery focus.",
+    outputs: ["Page architecture", "Component direction", "Engineering handoff"],
   },
 ];
 
-const editorTabs = ["brand-dna.ts", "sessions.md", "decision-path.json"];
-
 function BrandDnaSection() {
   const [activeStep, setActiveStep] = useState(0);
-  const [activeTab, setActiveTab] = useState(editorTabs[0]);
   const activeProcess = processSteps[activeStep];
 
+  useEffect(() => {
+    const timer = window.setTimeout(() => {
+      setActiveStep((current) => (current + 1) % processSteps.length);
+    }, 8000);
+
+    return () => window.clearTimeout(timer);
+  }, [activeStep]);
+
   return (
-    <section className="brand-dna-section relative z-10 overflow-hidden rounded-t-[34px] bg-[#f7f7f4] text-[#252728] shadow-[0_-28px_70px_rgba(35,48,54,0.06)] sm:rounded-t-[48px] lg:rounded-t-[64px]">
-      <div className="pointer-events-none absolute inset-x-0 top-0 h-48 bg-[linear-gradient(180deg,rgba(255,255,255,0.92),rgba(247,247,244,0))]" />
-      <div className="pointer-events-none absolute left-1/2 top-[-18%] h-[520px] w-[820px] -translate-x-1/2 rounded-full bg-[radial-gradient(circle,rgba(122,92,255,0.16),rgba(144,204,255,0.09)_36%,transparent_70%)] blur-3xl" />
+    <section className="align-process-section relative z-10 overflow-hidden bg-[#f7f7f4] text-[#2c2d2f]">
+      <div className="pointer-events-none absolute inset-y-0 left-[13vw] w-px bg-black/[0.06]" />
+      <div className="pointer-events-none absolute inset-y-0 right-[13vw] w-px bg-black/[0.06]" />
+      <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-black/[0.06]" />
 
-      <div className="relative mx-auto max-w-[1480px] px-5 pb-24 pt-16 sm:px-6 sm:pb-28 sm:pt-20 lg:px-7 lg:pb-36 lg:pt-24">
-        <div className="mb-14 grid gap-8 border-b border-black/10 pb-9 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] lg:items-end">
-          <div>
-            <div className="mb-6 inline-flex items-center gap-3 text-[12px] font-medium uppercase tracking-[0.18em] text-black/45">
-              <span className="h-2 w-2 rounded-full bg-[#7a5cff]" />
-              Case intro / process
-            </div>
-            <h2 className="max-w-[780px] text-[clamp(2.25rem,4.25vw,4.75rem)] font-normal leading-[0.98] tracking-[-0.055em] text-[#242728]">
-              We started with Brand DNA, not UI.
-            </h2>
+      <div className="relative mx-auto max-w-[1480px] px-5 pb-24 pt-28 sm:px-6 sm:pb-32 sm:pt-32 lg:px-7 lg:pb-40">
+        <div className="mx-auto mb-12 max-w-[850px] text-center">
+          <div className="mb-6 inline-flex items-center gap-2 rounded-[10px] border border-black/10 bg-white px-3 py-2 text-[14px] font-medium text-[#3c3d40] shadow-[0_10px_28px_rgba(30,30,30,0.08)]">
+            <Timer size={16} weight="fill" className="text-black/32" />
+            Rapid Alignment
           </div>
-
-          <div className="grid gap-6 lg:justify-items-end">
-            <p className="max-w-[520px] text-[17px] leading-[1.45] tracking-[-0.02em] text-black/68 sm:text-[20px]">
-              Before redesigning screens, we rebuilt the shared decision model: what the product means, who must believe it, and how engineering-led buyers move from doubt to commitment.
-            </p>
-            <div className="flex w-full max-w-[520px] items-center justify-between border-t border-black/12 pt-5 text-[12px] uppercase tracking-[0.16em] text-black/42">
-              <span>Discovery</span>
-              <ArrowRight size={18} strokeWidth={1.4} />
-              <span>Alignment</span>
-              <ArrowRight size={18} strokeWidth={1.4} />
-              <span>Execution</span>
-            </div>
-          </div>
+          <h2 className="mx-auto max-w-[760px] text-[clamp(2.35rem,4.5vw,4.95rem)] font-semibold leading-[1.04] tracking-[-0.065em] text-[#2d2e31]">
+            Make technical decisions faster before building screens
+          </h2>
+          <p className="mx-auto mt-7 max-w-[760px] text-[17px] leading-[1.6] text-black/46 sm:text-[20px]">
+            Rapidly turn <span className="font-medium text-[#2d2e31]">Brand DNA</span>, <span className="font-medium text-[#2d2e31]">stakeholder sessions</span> and <span className="font-medium text-[#2d2e31]">engineering alignment</span> into a clear build path.
+          </p>
         </div>
 
-        <ProcessRibbon activeStep={activeStep} onSelect={setActiveStep} />
-        <EditorSurface activeStep={activeStep} activeTab={activeTab} activeProcess={activeProcess} onTabChange={setActiveTab} />
+        <ProcessTabs activeStep={activeStep} onSelect={setActiveStep} />
+        <ProcessEditor activeStep={activeStep} activeProcess={activeProcess} />
+        <ProcessOutputs activeProcess={activeProcess} />
       </div>
     </section>
   );
 }
 
-function ProcessRibbon({
+function ProcessTabs({
   activeStep,
   onSelect,
 }: {
@@ -578,29 +592,25 @@ function ProcessRibbon({
   onSelect: (index: number) => void;
 }) {
   return (
-    <div className="relative mb-10 rounded-[24px] border border-black/10 bg-white/42 px-4 py-5 shadow-[0_20px_70px_rgba(26,35,38,0.06)] backdrop-blur-xl sm:px-6 lg:mb-12">
-      <div className="grid gap-4 md:grid-cols-4 md:divide-x md:divide-black/10">
+    <div className="relative mx-auto mb-10 max-w-[760px] sm:mb-12">
+      <div className="pointer-events-none absolute left-8 right-8 top-1/2 hidden h-px -translate-y-1/2 bg-black/10 md:block" />
+      <div className="pointer-events-none absolute left-1/2 top-[calc(100%+2px)] hidden h-16 w-px -translate-x-1/2 bg-black/10 md:block" />
+      <div className="grid gap-3 md:grid-cols-3">
         {processSteps.map((step, index) => {
-          const Icon = step.icon;
+          const isActive = index === activeStep;
+          const isComplete = index < activeStep;
 
           return (
             <button
               key={step.label}
-              className="group relative px-2 py-3 text-left transition duration-300 hover:-translate-y-1 hover:bg-white/35 md:px-5"
+              className={isActive ? "process-tab process-tab-active" : "process-tab"}
               type="button"
               onClick={() => onSelect(index)}
-              aria-pressed={activeStep === index}
+              aria-pressed={isActive}
             >
-              <div className="mb-5 flex items-center gap-3">
-                <div className={activeStep === index ? "process-icon process-icon-active" : "process-icon"}>
-                  <Icon size={18} strokeWidth={1.7} />
-                </div>
-                <span className="rounded-full border border-black/10 bg-white/60 px-2 py-1 text-[10px] font-semibold uppercase tracking-[0.12em] text-black/42">
-                  {step.meta}
-                </span>
-              </div>
-              <h3 className="mb-2 text-[16px] font-medium tracking-[-0.02em] text-[#242728]">{step.label}</h3>
-              <p className="max-w-[270px] text-[13px] leading-[1.35] text-black/52">{step.description}</p>
+              <StepStateIcon active={isActive} complete={isComplete} />
+              <span className="relative z-10 truncate">{step.label}</span>
+              {isActive ? <span key={activeStep} className="process-tab-progress" /> : null}
             </button>
           );
         })}
@@ -609,142 +619,117 @@ function ProcessRibbon({
   );
 }
 
-function EditorSurface({
+function StepStateIcon({ active, complete }: { active: boolean; complete: boolean }) {
+  if (active) {
+    return <SpinnerGap size={17} weight="fill" className="relative z-10 animate-spin text-[#2f66ff]" />;
+  }
+
+  if (complete) {
+    return <CheckCircle size={18} weight="fill" className="relative z-10 text-[#2fbf71]" />;
+  }
+
+  return <Circle size={17} weight="regular" className="relative z-10 text-black/24" />;
+}
+
+function ProcessEditor({
   activeStep,
-  activeTab,
   activeProcess,
-  onTabChange,
 }: {
   activeStep: number;
-  activeTab: string;
   activeProcess: (typeof processSteps)[number];
-  onTabChange: (tab: string) => void;
 }) {
-  const codeByTab: Record<string, string[]> = {
-    "brand-dna.ts": [
-      "brandDNA.define({",
-      "  audience: 'CTO + engineering leads',",
-      "  promise: 'velocity without loss of clarity',",
-      "  riskModel: ['migration', 'team focus', 'delivery confidence'],",
-      "  currentFocus: '" + activeProcess.label + "',",
-      "});",
-      "",
-      "process.lock('" + activeProcess.meta + "');",
-    ],
-    "sessions.md": [
-      "# Stakeholder synthesis",
-      "- Product meaning before interface decisions",
-      "- Executive priorities translated into buyer proof",
-      "- Engineering constraints surfaced before page logic",
-      "- Active lens: " + activeProcess.focus,
-    ],
-    "decision-path.json": [
-      "{",
-      '  "buyer": "CTO / engineering lead",',
-      '  "activeStage": "' + activeProcess.label + '",',
-      '  "evidence": ["clarity", "velocity", "handoff confidence"],',
-      '  "nextAction": "turn alignment into page architecture"',
-      "}",
-    ],
-  };
-  const codeLines = codeByTab[activeTab];
-
   return (
-    <div className="relative overflow-hidden rounded-[32px] border border-black/10 bg-[#eeeeeb]/82 shadow-[0_42px_120px_rgba(30,38,42,0.12)] backdrop-blur-2xl lg:rounded-[42px]">
-      <div className="flex items-center justify-between border-b border-black/8 px-5 py-5 text-[13px] text-black/36 sm:px-7">
-        <div className="flex items-center gap-2">
-          <span className="h-3 w-3 rounded-full bg-[#7a5cff]" />
-          <span className="h-3 w-3 rounded-full bg-[#b8a8ff]" />
-          <span className="h-3 w-3 rounded-full bg-[#7fc7ff]" />
-        </div>
-        <div className="hidden items-center gap-2 sm:flex">
-          <span className="h-3 w-3 rounded-full border border-black/18" />
-          <span>onlytrusted.process</span>
-        </div>
-        <div className="flex items-center gap-3 text-black/24">
-          <Braces size={17} />
-          <Code2 size={17} />
-        </div>
-      </div>
-
-      <div className="grid min-h-[560px] lg:grid-cols-[280px_minmax(0,1fr)_340px]">
-        <aside className="hidden border-r border-black/8 bg-white/28 p-6 lg:block">
-          <div className="mb-5 flex items-center gap-2 text-[12px] font-medium uppercase tracking-[0.14em] text-black/36">
-            <span className="h-2 w-2 rounded-full bg-[#7a5cff]" />
-            Sessions
+    <div className="relative mx-auto max-w-[1050px]">
+      <div className="pointer-events-none absolute left-1/2 top-[-40px] hidden h-10 w-px -translate-x-1/2 bg-black/10 md:block" />
+      <div className="overflow-hidden rounded-[28px] border border-black/10 bg-[#eeeeec] shadow-[0_36px_90px_rgba(30,33,36,0.12)]">
+        <div className="flex items-center justify-between border-b border-black/10 px-5 py-5 text-[14px] text-black/34 sm:px-6">
+          <div className="flex items-center gap-2">
+            <BracketsCurly size={16} weight="fill" className="text-[#2f66ff]" />
+            <span className="font-mono">{activeProcess.file}</span>
+            <span className="h-1.5 w-1.5 rounded-full bg-black/35" />
           </div>
-          {["Leadership priorities", "Buyer objections", "Engineering constraints", "Migration anxieties", "Proof hierarchy"].map((item, index) => (
-            <button
-              key={item}
-              className={index === activeStep ? "mb-2 w-full rounded-[14px] bg-white px-4 py-3 text-left text-[14px] text-black/70 shadow-[0_12px_30px_rgba(0,0,0,0.05)] transition hover:-translate-y-0.5" : "mb-2 w-full rounded-[14px] px-4 py-3 text-left text-[14px] text-black/34 transition hover:bg-white/40 hover:text-black/62"}
-              type="button"
-            >
-              {item}
-            </button>
-          ))}
-        </aside>
-
-        <div className="relative border-r border-black/8 p-5 sm:p-7">
-          <div className="mb-6 flex flex-col justify-between gap-4 border-b border-black/8 pb-4 text-[13px] text-black/38 sm:flex-row sm:items-center">
-            <div className="flex flex-wrap gap-2">
-              {editorTabs.map((tab) => (
-                <button
-                  key={tab}
-                  className={tab === activeTab ? "rounded-full bg-[#7a5cff] px-3 py-1.5 text-white shadow-[0_12px_26px_rgba(122,92,255,0.22)]" : "rounded-full bg-white/58 px-3 py-1.5 text-black/42 transition hover:bg-white hover:text-black/68"}
-                  type="button"
-                  onClick={() => onTabChange(tab)}
-                >
-                  {tab}
-                </button>
-              ))}
-            </div>
-            <span>case-intro</span>
+          <div className="hidden items-center gap-2 border-l border-black/10 pl-7 sm:flex">
+            <Circle size={13} weight="regular" className="text-black/24" />
+            <span className="font-mono">preview</span>
           </div>
-          <div className="font-mono text-[13px] leading-[1.95] text-black/38 sm:text-[14px]">
-            {codeLines.map((line, index) => (
-              <div key={`${line}-${index}`} className="grid grid-cols-[34px_minmax(0,1fr)] gap-4">
+        </div>
+
+        <div className="grid bg-white/55 lg:grid-cols-[minmax(0,1.45fr)_minmax(320px,0.85fr)]">
+          <div className="min-h-[430px] border-b border-black/10 p-6 font-mono text-[13px] leading-[1.85] text-black/48 sm:p-8 sm:text-[14px] lg:border-b-0 lg:border-r">
+            {activeProcess.code.map((line, index) => (
+              <div key={`${activeStep}-${line}-${index}`} className="grid grid-cols-[32px_minmax(0,1fr)] gap-5">
                 <span className="select-none text-right text-black/16">{index + 1}</span>
-                <span className={line.includes("brandDNA") || line.includes("handoff") ? "text-[#4267ff]/78" : line.includes("'") ? "text-[#7661ff]/62" : ""}>
+                <span className={line.includes("import") || line.includes("export") || line.includes("const") ? "text-[#315dff]" : line.includes("'") || line.includes('"') ? "text-[#5472d8]" : line.includes("//") ? "text-black/24" : ""}>
                   {line || "\u00a0"}
                 </span>
               </div>
             ))}
           </div>
 
-          <div className="pointer-events-none absolute inset-x-0 bottom-0 h-56 bg-[linear-gradient(180deg,rgba(247,247,244,0),rgba(247,247,244,0.94)_70%)]" />
-          <div className="absolute bottom-8 left-1/2 w-[min(520px,calc(100%-40px))] -translate-x-1/2 text-center">
-            <div className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-full border border-[#7a5cff]/25 bg-white/80 text-[#7a5cff] shadow-[0_18px_48px_rgba(122,92,255,0.16)] transition duration-300 hover:scale-105">
-              <Workflow size={26} strokeWidth={1.5} />
+          <div className="flex min-h-[430px] items-center justify-center bg-white p-6">
+            <div className="w-full max-w-[360px] text-center">
+              <div className="mx-auto mb-7 flex h-16 w-16 items-center justify-center rounded-full bg-[#315dff] text-white shadow-[0_18px_40px_rgba(49,93,255,0.26)]">
+                <FlowArrow size={32} weight="fill" />
+              </div>
+              <h3 className="text-[24px] font-semibold tracking-[-0.04em] text-[#222326]">{activeProcess.previewTitle}</h3>
+              <p className="mx-auto mt-2 max-w-[300px] text-[15px] leading-[1.45] text-black/52">{activeProcess.previewSubtitle}</p>
+              <div className="mt-8 space-y-3">
+                {activeProcess.outputs.map((output) => (
+                  <div key={output} className="rounded-[12px] border border-black/10 bg-white px-4 py-3 text-[14px] font-medium text-black/62 shadow-[0_8px_20px_rgba(0,0,0,0.035)]">
+                    {output}
+                  </div>
+                ))}
+              </div>
+              <button className="mt-6 w-full rounded-[12px] bg-[#315dff] px-5 py-3 text-[14px] font-semibold text-white shadow-[0_14px_32px_rgba(49,93,255,0.25)] transition hover:-translate-y-0.5 hover:bg-[#234de2]" type="button">
+                Review alignment path
+              </button>
             </div>
-            <h3 className="mb-2 text-[24px] font-medium tracking-[-0.04em] text-[#282b2c]">{activeProcess.label} before the interface layer</h3>
-            <p className="mx-auto max-w-[470px] text-[14px] leading-[1.45] text-black/48">
-              {activeProcess.focus} Every screen inherited a shared strategic spine, so product, marketing and engineering could move faster.
-            </p>
           </div>
         </div>
+      </div>
+    </div>
+  );
+}
 
-        <aside className="relative hidden bg-white/24 p-6 lg:block">
-          <div className="mb-5 text-[12px] font-medium uppercase tracking-[0.14em] text-black/36">Preview</div>
-          <div className="space-y-4">
-            {[
-              ["Active stage", activeProcess.label],
-              ["Primary tension", "move faster without losing trust"],
-              ["System output", activeProcess.focus],
-            ].map(([label, value]) => (
-              <div key={label} className="rounded-[18px] border border-black/8 bg-white/56 p-4 transition duration-300 hover:-translate-y-1 hover:bg-white">
-                <div className="mb-2 text-[11px] uppercase tracking-[0.14em] text-black/32">{label}</div>
-                <div className="text-[15px] leading-[1.25] tracking-[-0.02em] text-black/70">{value}</div>
+function ProcessOutputs({ activeProcess }: { activeProcess: (typeof processSteps)[number] }) {
+  const outputCards = [
+    {
+      icon: Gauge,
+      title: "Faster decision-making",
+      text: "Reduce redesign loops by making business priorities explicit before interface work starts.",
+      tone: "text-[#315dff]",
+    },
+    {
+      icon: CheckCircle,
+      title: "Aligned stakeholder logic",
+      text: activeProcess.detail,
+      tone: "text-[#2fbf71]",
+    },
+    {
+      icon: GitBranch,
+      title: "Cleaner handoff",
+      text: "Translate strategy into page architecture, content rules and component-ready direction.",
+      tone: "text-[#315dff]",
+    },
+  ];
+
+  return (
+    <div className="relative mx-auto mt-12 max-w-[1050px]">
+      <div className="pointer-events-none absolute left-1/2 top-[-48px] hidden h-12 w-px -translate-x-1/2 bg-black/10 md:block" />
+      <div className="grid gap-8 md:grid-cols-3">
+        {outputCards.map((card) => {
+          const Icon = card.icon;
+
+          return (
+            <div key={card.title} className="group text-center">
+              <div className="mx-auto mb-5 flex h-9 w-9 items-center justify-center rounded-full bg-white text-black/30 shadow-[0_8px_24px_rgba(0,0,0,0.06)] transition duration-300 group-hover:-translate-y-1 group-hover:shadow-[0_14px_32px_rgba(49,93,255,0.12)]">
+                <Icon size={20} weight="fill" className={card.tone} />
               </div>
-            ))}
-          </div>
-          <div className="absolute bottom-6 left-6 right-6 rounded-[22px] bg-[#282b2c] p-5 text-white shadow-[0_22px_60px_rgba(0,0,0,0.18)]">
-            <div className="mb-8 text-[12px] uppercase tracking-[0.18em] text-white/40">Next</div>
-            <div className="flex items-end justify-between gap-5">
-              <p className="max-w-[190px] text-[22px] leading-[1.02] tracking-[-0.05em]">Turn alignment into page architecture.</p>
-              <ArrowRight size={22} strokeWidth={1.4} />
+              <h3 className="text-[17px] font-semibold tracking-[-0.02em] text-[#2c2d2f]">{card.title}</h3>
+              <p className="mx-auto mt-2 max-w-[290px] text-[15px] leading-[1.45] text-black/46">{card.text}</p>
             </div>
-          </div>
-        </aside>
+          );
+        })}
       </div>
     </div>
   );
