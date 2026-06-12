@@ -115,12 +115,12 @@ a {
   left: 0;
   z-index: 0;
   display: none;
-  width: calc((100% - 24px) / 3);
+  width: calc((100% - 64px) / 3);
   content: "";
   border-radius: 999px;
   background: rgba(255, 255, 255, 0.64);
   box-shadow: 0 18px 44px rgba(35, 41, 50, 0.08);
-  transform: translateX(calc(var(--active-index) * (100% + 12px)));
+  transform: translateX(calc(var(--active-index) * (100% + 32px)));
   transition: transform var(--t-slow) var(--t-ease-emphasized);
 }
 
@@ -137,10 +137,10 @@ a {
 .tab-chevron {
   position: absolute;
   top: 50%;
-  z-index: 3;
+  z-index: 2;
   display: none;
-  width: 24px;
-  height: 24px;
+  width: 22px;
+  height: 22px;
   align-items: center;
   justify-content: center;
   border: 1px solid rgba(0, 0, 0, 0.08);
@@ -152,11 +152,11 @@ a {
 }
 
 .tab-chevron-left {
-  left: calc((100% - 24px) / 3 + 6px);
+  left: calc((100% - 64px) / 3 + 16px);
 }
 
 .tab-chevron-right {
-  left: calc(((100% - 24px) / 3) * 2 + 18px);
+  left: calc(((100% - 64px) / 3) * 2 + 48px);
 }
 
 @media (min-width: 768px) {
@@ -167,12 +167,12 @@ a {
 
 .process-connector {
   position: absolute;
-  right: 44px;
-  bottom: -70px;
-  left: 44px;
+  right: 56px;
+  bottom: -38px;
+  left: 56px;
   z-index: 0;
   display: none;
-  height: 72px;
+  height: 42px;
   border-right: 1px solid rgba(0, 0, 0, 0.09);
   border-bottom: 1px solid rgba(0, 0, 0, 0.09);
   border-left: 1px solid rgba(0, 0, 0, 0.09);
@@ -182,17 +182,17 @@ a {
 
 .process-connector::before {
   position: absolute;
-  bottom: -24px;
+  bottom: -20px;
   left: 50%;
   width: 1px;
-  height: 24px;
+  height: 20px;
   content: "";
   background: rgba(0, 0, 0, 0.09);
 }
 
 .process-connector::after {
   position: absolute;
-  bottom: -28px;
+  bottom: -24px;
   left: 50%;
   width: 7px;
   height: 7px;
@@ -200,8 +200,8 @@ a {
   border-radius: 999px;
   background: rgba(0, 0, 0, 0.1);
   box-shadow:
-    -50vw -53px 0 -2px rgba(0, 0, 0, 0.08),
-    50vw -53px 0 -2px rgba(0, 0, 0, 0.08);
+    -50vw -31px 0 -2px rgba(0, 0, 0, 0.08),
+    50vw -31px 0 -2px rgba(0, 0, 0, 0.08);
   transform: translateX(-50%);
 }
 
@@ -218,7 +218,7 @@ a {
 }
 
 .process-tab-active {
-  border-color: rgba(49, 93, 255, 0.42);
+  border-color: transparent;
   background: rgba(255, 255, 255, 0.92);
   color: #3b3c40;
   box-shadow:
@@ -228,17 +228,17 @@ a {
 
 .process-tab-border-progress {
   position: absolute;
-  inset: 0;
+  inset: -1px;
   z-index: 2;
-  width: 100%;
-  height: 100%;
+  width: calc(100% + 2px);
+  height: calc(100% + 2px);
   overflow: visible;
   pointer-events: none;
 }
 
 .process-tab-border-progress path {
   stroke: #315dff;
-  stroke-width: 1.5;
+  stroke-width: 1.25;
   stroke-linecap: round;
   stroke-linejoin: round;
   stroke-dasharray: 100;
@@ -265,6 +265,10 @@ a {
 
 .t-panel-shell {
   animation: tPanelReveal 900ms 340ms var(--t-ease-emphasized) both;
+}
+
+.process-editor-inner {
+  isolation: isolate;
 }
 
 .t-panel-slide {

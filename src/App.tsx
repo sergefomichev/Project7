@@ -569,11 +569,15 @@ function BrandDnaSection() {
             <Timer size={16} weight="fill" className="text-black/32" />
             <span className="t-shimmer-text">Rapid Alignment</span>
           </div>
-          <h2 className="t-title-reveal mx-auto max-w-[760px] text-[clamp(2.35rem,4.5vw,4.95rem)] font-semibold leading-[1.04] tracking-[-0.065em] text-[#2d2e31]">
+          <h2 className="t-title-reveal mx-auto max-w-[760px] text-[clamp(2.35rem,4.5vw,4.95rem)] font-normal leading-[1.04] tracking-[-0.065em] text-[#2d2e31]">
             Make technical decisions faster before building screens
           </h2>
-          <p className="t-subtitle-reveal mx-auto mt-7 max-w-[760px] text-[17px] leading-[1.6] text-black/46 sm:text-[20px]">
-            Rapidly turn <span className="font-medium text-[#2d2e31]">Brand DNA</span>, <span className="font-medium text-[#2d2e31]">stakeholder sessions</span> and <span className="font-medium text-[#2d2e31]">engineering alignment</span> into a clear build path.
+          <p className="t-subtitle-reveal mx-auto mt-7 max-w-[760px] text-[17px] leading-[1.6] text-black/44 sm:text-[20px]">
+            <span>Rapidly turn </span>
+            <span className="font-medium text-[#2d2e31]">Brand DNA</span>
+            <span>, stakeholder sessions and </span>
+            <span className="font-medium text-[#2d2e31]">engineering alignment</span>
+            <span> into a clear build path.</span>
           </p>
         </div>
 
@@ -593,9 +597,9 @@ function ProcessTabs({
   onSelect: (index: number) => void;
 }) {
   return (
-    <div className="t-tabs-reveal relative mx-auto mb-20 max-w-[760px] sm:mb-24">
+    <div className="t-tabs-reveal relative mx-auto mb-10 max-w-[880px] sm:mb-12">
       <div className="process-connector" aria-hidden="true" />
-      <div className="process-tabs-track grid gap-3 md:grid-cols-3" style={{ "--active-index": activeStep } as React.CSSProperties}>
+      <div className="process-tabs-track grid gap-3 md:grid-cols-3 md:gap-8" style={{ "--active-index": activeStep } as React.CSSProperties}>
         <span className="tab-chevron tab-chevron-left" aria-hidden="true">
           <CaretRight size={13} weight="regular" />
         </span>
@@ -629,7 +633,7 @@ function TabProgressBorder() {
   return (
     <svg className="process-tab-border-progress" viewBox="0 0 100 46" preserveAspectRatio="none" aria-hidden="true">
       <path
-        d="M50 1 H77 Q99 1 99 23 Q99 45 77 45 H23 Q1 45 1 23 Q1 1 23 1 H50"
+        d="M50 1.5 H77 Q98.5 1.5 98.5 23 Q98.5 44.5 77 44.5 H23 Q1.5 44.5 1.5 23 Q1.5 1.5 23 1.5 H50"
         fill="none"
         pathLength={100}
       />
@@ -656,49 +660,72 @@ function ProcessEditor({
 }) {
   return (
     <div className="t-panel-shell relative mx-auto max-w-[1050px]">
-      <div className="pointer-events-none absolute left-1/2 top-[-40px] hidden h-10 w-px -translate-x-1/2 bg-black/10 md:block" />
+      <div className="pointer-events-none absolute left-1/2 top-[-22px] hidden h-6 w-px -translate-x-1/2 bg-black/10 md:block" />
       <div className="overflow-hidden rounded-[28px] border border-black/10 bg-[#eeeeec] shadow-[0_36px_90px_rgba(30,33,36,0.12)]">
-        <div className="grid items-center border-b border-black/10 text-[14px] text-black/34 lg:grid-cols-[minmax(0,1.45fr)_minmax(320px,0.85fr)]">
-          <div className="flex items-center gap-2 px-5 py-5 sm:px-6">
-            <BracketsCurly size={16} weight="fill" className="text-[#2f66ff]" />
-            <span className="font-mono">{activeProcess.file}</span>
-            <span className="h-1.5 w-1.5 rounded-full bg-black/35" />
-          </div>
-          <div className="hidden items-center gap-2 border-l border-black/10 px-5 py-5 sm:flex sm:px-6">
-            <Circle size={13} weight="regular" className="text-black/24" />
-            <span className="font-mono">preview</span>
+        <div className="border-b border-black/10 bg-[#eeeeec] px-2.5 sm:px-3">
+          <div className="grid items-center text-[14px] text-black/34 lg:grid-cols-[minmax(0,1.45fr)_minmax(320px,0.85fr)]">
+            <div className="flex items-center gap-2 px-3 py-5 sm:px-4">
+              <BracketsCurly size={16} weight="fill" className="text-[#2f66ff]" />
+              <span className="font-mono">{activeProcess.file}</span>
+              <span className="h-1.5 w-1.5 rounded-full bg-black/35" />
+            </div>
+            <div className="hidden items-center gap-2 border-l border-black/10 px-3 py-5 sm:flex sm:px-4">
+              <Circle size={13} weight="regular" className="text-black/24" />
+              <span className="font-mono">preview</span>
+            </div>
           </div>
         </div>
 
-        <div className="grid bg-white/55 lg:grid-cols-[minmax(0,1.45fr)_minmax(320px,0.85fr)]">
-          <div key={`code-${activeStep}`} className="t-panel-slide min-h-[430px] border-b border-black/10 p-6 font-mono text-[13px] leading-[1.85] text-black/48 sm:p-8 sm:text-[14px] lg:border-b-0 lg:border-r">
-            {activeProcess.code.map((line, index) => (
-              <div key={`${activeStep}-${line}-${index}`} className="t-code-line grid grid-cols-[32px_minmax(0,1fr)] gap-5" style={{ "--line-index": index } as React.CSSProperties}>
-                <span className="code-line-number select-none text-right">{index + 1}</span>
-                <span className={line.includes("import") || line.includes("export") || line.includes("const") ? "text-[#315dff]" : line.includes("'") || line.includes('"') ? "text-[#5472d8]" : line.includes("//") ? "text-black/24" : ""}>
-                  {line || "\u00a0"}
-                </span>
-              </div>
-            ))}
-          </div>
+        <div className="bg-[#eeeeec] p-2.5 sm:p-3">
+          <div className="process-editor-inner grid overflow-hidden rounded-[22px] bg-white shadow-[0_22px_70px_rgba(31,35,40,0.11)] lg:grid-cols-[minmax(0,1.45fr)_minmax(320px,0.85fr)]">
+            <div key={`code-${activeStep}`} className="t-panel-slide min-h-[410px] border-b border-black/10 p-6 font-mono text-[13px] leading-[1.85] text-black/48 sm:p-8 sm:text-[14px] lg:border-b-0 lg:border-r">
+              {activeProcess.code.map((line, index) => (
+                <div key={`${activeStep}-${line}-${index}`} className="t-code-line grid grid-cols-[32px_minmax(0,1fr)] gap-5" style={{ "--line-index": index } as React.CSSProperties}>
+                  <span className="code-line-number select-none text-right">{index + 1}</span>
+                  <span className={line.includes("import") || line.includes("export") || line.includes("const") ? "text-[#315dff]" : line.includes("'") || line.includes('"') ? "text-[#5472d8]" : line.includes("//") ? "text-black/24" : ""}>
+                    {line || "\u00a0"}
+                  </span>
+                </div>
+              ))}
+            </div>
 
-          <div className="flex min-h-[430px] items-center justify-center bg-white p-6">
-            <div key={`preview-${activeStep}`} className="t-panel-scale w-full max-w-[360px] text-center">
-              <div className="t-orb-pulse mx-auto mb-7 flex h-16 w-16 items-center justify-center rounded-full bg-[#315dff] text-white shadow-[0_18px_40px_rgba(49,93,255,0.26)]">
-                <FlowArrow size={32} weight="fill" />
-              </div>
-              <h3 className="t-text-swap text-[24px] font-semibold tracking-[-0.04em] text-[#222326]">{activeProcess.previewTitle}</h3>
-              <p className="t-text-swap mx-auto mt-2 max-w-[300px] text-[15px] leading-[1.45] text-black/52">{activeProcess.previewSubtitle}</p>
-              <div className="mt-8 space-y-3">
-                {activeProcess.outputs.map((output, index) => (
-                  <div key={output} className="t-list-item rounded-[12px] border border-black/10 bg-white px-4 py-3 text-[14px] font-medium text-black/62 shadow-[0_8px_20px_rgba(0,0,0,0.035)]" style={{ "--line-index": index } as React.CSSProperties}>
-                    {output}
+            <div className="flex min-h-[410px] items-center justify-center bg-white p-6">
+              <div key={`preview-${activeStep}`} className="t-panel-scale w-full max-w-[360px]">
+                <div className="mb-7 flex items-center gap-3">
+                  <div className="t-orb-pulse flex h-12 w-12 items-center justify-center rounded-full bg-[#315dff] text-white shadow-[0_18px_40px_rgba(49,93,255,0.26)]">
+                    <FlowArrow size={24} weight="fill" />
                   </div>
-                ))}
+                  <div>
+                    <p className="text-[12px] font-semibold uppercase tracking-[0.16em] text-black/32">Decision system</p>
+                    <h3 className="t-text-swap text-[23px] font-semibold tracking-[-0.04em] text-[#222326]">{activeProcess.previewTitle}</h3>
+                  </div>
+                </div>
+                <p className="t-text-swap max-w-[320px] text-[15px] leading-[1.5] text-black/52">{activeProcess.previewSubtitle}</p>
+                <div className="mt-8 space-y-3">
+                  {["CTO criteria", "Engineering proof", "Leadership confidence"].map((item, index) => (
+                    <div key={item} className="t-list-item flex items-center gap-3 rounded-[14px] bg-[#f7f7f4] px-4 py-3 text-[14px] font-medium text-black/62 shadow-[inset_0_0_0_1px_rgba(0,0,0,0.06)]" style={{ "--line-index": index } as React.CSSProperties}>
+                      <span className="flex h-7 w-7 items-center justify-center rounded-full bg-white text-[#315dff] shadow-[0_8px_18px_rgba(0,0,0,0.06)]">
+                        <CheckCircle size={16} weight="fill" />
+                      </span>
+                      <span>{item}</span>
+                    </div>
+                  ))}
+                </div>
+                <div className="mt-8 rounded-[16px] bg-[#24272a] p-4 text-white shadow-[0_18px_46px_rgba(20,22,24,0.16)]">
+                  <div className="mb-3 flex items-center justify-between text-[12px] text-white/46">
+                    <span>active output</span>
+                    <span>0{activeStep + 1}/03</span>
+                  </div>
+                  <div className="space-y-2">
+                    {activeProcess.outputs.map((output, index) => (
+                      <div key={output} className="t-list-item flex items-center gap-2 text-[13px] text-white/74" style={{ "--line-index": index } as React.CSSProperties}>
+                        <span className="h-1.5 w-1.5 rounded-full bg-[#6b8cff]" />
+                        {output}
+                      </div>
+                    ))}
+                  </div>
+                </div>
               </div>
-              <button className="t-button-magnetic mt-6 w-full rounded-[12px] bg-[#315dff] px-5 py-3 text-[14px] font-semibold text-white shadow-[0_14px_32px_rgba(49,93,255,0.25)] transition hover:-translate-y-0.5 hover:bg-[#234de2]" type="button">
-                Review alignment path
-              </button>
             </div>
           </div>
         </div>
