@@ -1,7 +1,27 @@
 {
   "controls": [
-    { "sid": "ballColor", "label": "Ball color" },
-    { "sid": "ballOpacity", "label": "Ball opacity", "min": 0, "max": 100, "step": 1 },
-    { "sid": "ballSize", "label": "Ball size", "min": 20, "max": 400, "step": 1 }
+    {
+      "sid": "bgColor",
+      "label": "Background color"
+    },
+    {
+      "sid": "strandColorA",
+      "label": "Primary strand color"
+    },
+    {
+      "sid": "strandColorB",
+      "label": "Secondary strand color"
+    },
+    {
+      "sid": "connectorColor",
+      "label": "Base pair color"
+    },
+    {
+      "sid": "overallOpacity",
+      "label": "DNA opacity",
+      "min": 0,
+      "max": 100,
+      "step": 1
+    }
   ]
 }
