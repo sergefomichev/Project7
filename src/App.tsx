@@ -176,9 +176,11 @@ function useScrollReveal() {
   useEffect(() => {
     const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
     const revealSelector = "[data-reveal], [data-section-reveal]";
+    const seen = new WeakSet<Element>();
 
     const revealNow = (element: Element) => {
       element.classList.add("is-visible");
+      seen.add(element);
     };
 
     if (reduceMotion.matches || !("IntersectionObserver" in window)) {
@@ -202,17 +204,44 @@ function useScrollReveal() {
       },
     );
 
-    document.querySelectorAll(revealSelector).forEach((element) => {
-      if (element.closest(".hero-section")) {
+    const registerRevealElement = (element: Element) => {
+      if (seen.has(element)) {
+        return;
+      }
+
+      if (element.closest(".hero-section") || element.closest("[data-section-reveal].is-visible")) {
         revealNow(element);
         return;
       }
 
       observer.observe(element);
+      seen.add(element);
+    };
+
+    const registerTree = (node: Node) => {
+      if (!(node instanceof Element)) {
+        return;
+      }
+
+      if (node.matches(revealSelector)) {
+        registerRevealElement(node);
+      }
+
+      node.querySelectorAll(revealSelector).forEach(registerRevealElement);
+    };
+
+    document.querySelectorAll(revealSelector).forEach(registerRevealElement);
+
+    const mutationObserver = new MutationObserver((mutations) => {
+      mutations.forEach((mutation) => {
+        mutation.addedNodes.forEach(registerTree);
+      });
     });
+    mutationObserver.observe(document.body, { childList: true, subtree: true });
 
     return () => {
       observer.disconnect();
+      mutationObserver.disconnect();
     };
   }, []);
 }
