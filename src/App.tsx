@@ -73,6 +73,7 @@ function useHeroCursor() {
   const [cursor, setCursor] = useState<CursorState>({ rx: 0, ry: 0, x: 0, y: 0, active: false });
   const target = useRef<CursorState>({ rx: 0, ry: 0, x: 0, y: 0, active: false });
   const current = useRef<CursorState>({ rx: 0, ry: 0, x: 0, y: 0, active: false });
+  const viewport = useRef({ width: 1440, height: 900 });
 
   useEffect(() => {
     const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -82,6 +83,13 @@ function useHeroCursor() {
     if (reduceMotion.matches || coarsePointer.matches) {
       return undefined;
     }
+
+    const updateViewport = () => {
+      viewport.current = {
+        width: window.innerWidth,
+        height: window.innerHeight,
+      };
+    };
 
     function tick() {
       current.current.rx += (target.current.rx - current.current.rx) * 0.07;
@@ -108,9 +116,11 @@ function useHeroCursor() {
     };
 
     const handlePointerMove = (event: PointerEvent) => {
+      const { width, height } = viewport.current;
+
       target.current = {
-        rx: (event.clientX / window.innerWidth - 0.5) * 2,
-        ry: (event.clientY / window.innerHeight - 0.5) * 2,
+        rx: (event.clientX / width - 0.5) * 2,
+        ry: (event.clientY / height - 0.5) * 2,
         x: event.clientX,
         y: event.clientY,
         active: true,
@@ -119,16 +129,20 @@ function useHeroCursor() {
     };
 
     const handlePointerLeave = () => {
-      target.current = { rx: 0, ry: 0, x: window.innerWidth / 2, y: window.innerHeight / 2, active: false };
+      const { width, height } = viewport.current;
+      target.current = { rx: 0, ry: 0, x: width / 2, y: height / 2, active: false };
       startTick();
     };
 
+    updateViewport();
     window.addEventListener("pointermove", handlePointerMove, { passive: true });
     window.addEventListener("pointerleave", handlePointerLeave);
+    window.addEventListener("resize", updateViewport, { passive: true });
 
     return () => {
       window.removeEventListener("pointermove", handlePointerMove);
       window.removeEventListener("pointerleave", handlePointerLeave);
+      window.removeEventListener("resize", updateViewport);
       if (frame) {
         window.cancelAnimationFrame(frame);
       }
@@ -138,15 +152,33 @@ function useHeroCursor() {
   return cursor;
 }
 
+function useViewportSize() {
+  const [size, setSize] = useState({ width: 1440, height: 900 });
+
+  useEffect(() => {
+    const update = () => {
+      setSize({
+        width: window.innerWidth,
+        height: window.innerHeight,
+      });
+    };
+
+    update();
+    window.addEventListener("resize", update, { passive: true });
+
+    return () => window.removeEventListener("resize", update);
+  }, []);
+
+  return size;
+}
+
 function useScrollReveal() {
   useEffect(() => {
     const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
     const revealSelector = "[data-reveal], [data-section-reveal]";
-    const seen = new WeakSet<Element>();
 
     const revealNow = (element: Element) => {
       element.classList.add("is-visible");
-      seen.add(element);
     };
 
     if (reduceMotion.matches || !("IntersectionObserver" in window)) {
@@ -165,32 +197,22 @@ function useScrollReveal() {
         });
       },
       {
-        rootMargin: "0px 0px 5% 0px",
-        threshold: 0.01,
+        rootMargin: "18% 0px 18% 0px",
+        threshold: 0,
       },
     );
 
-    const observeNew = () => {
-      document.querySelectorAll(revealSelector).forEach((element) => {
-        if (seen.has(element)) {
-          return;
-        }
-        if (element.closest(".hero-section") || element.closest("[data-section-reveal].is-visible")) {
-          revealNow(element);
-          return;
-        }
-        observer.observe(element);
-        seen.add(element);
-      });
-    };
+    document.querySelectorAll(revealSelector).forEach((element) => {
+      if (element.closest(".hero-section")) {
+        revealNow(element);
+        return;
+      }
 
-    observeNew();
-    const mutationObserver = new MutationObserver(observeNew);
-    mutationObserver.observe(document.body, { childList: true, subtree: true });
+      observer.observe(element);
+    });
 
     return () => {
       observer.disconnect();
-      mutationObserver.disconnect();
     };
   }, []);
 }
@@ -211,11 +233,12 @@ function App() {
 
 function HeroSection() {
   const cursor = useHeroCursor();
+  const viewport = useViewportSize();
 
   return (
     <section className="hero-section relative isolate min-h-[100svh] overflow-hidden bg-[#050712]">
       <ShaderBackground />
-      <InteractiveGlassPanels cursor={cursor} />
+      <InteractiveGlassPanels cursor={cursor} viewport={viewport} />
       <div className="absolute inset-0 z-[3] bg-[linear-gradient(180deg,rgba(4,7,18,0.18)_0%,rgba(4,7,18,0.02)_42%,rgba(4,7,18,0.78)_100%)]" />
       {visibleSections.heroDnaShader ? <DnaShader /> : null}
       <TopNav />
@@ -233,9 +256,15 @@ function ShaderBackground() {
   );
 }
 
-function InteractiveGlassPanels({ cursor }: { cursor: CursorState }) {
-  const viewportWidth = typeof window === "undefined" ? 1440 : window.innerWidth;
-  const viewportHeight = typeof window === "undefined" ? 900 : window.innerHeight;
+function InteractiveGlassPanels({
+  cursor,
+  viewport,
+}: {
+  cursor: CursorState;
+  viewport: { width: number; height: number };
+}) {
+  const viewportWidth = viewport.width;
+  const viewportHeight = viewport.height;
   const panelSize = Math.min(Math.max(viewportWidth * 0.12, 132), 200);
   const panelWidth = panelSize * 2.7;
   const panelHeight = panelSize * 4;
@@ -1211,8 +1240,26 @@ function AerospaceDnaSection() {
       <div className="aerospace-dna-object pointer-events-none absolute left-1/2 top-1/2 z-[4] -translate-x-1/2 -translate-y-1/2" aria-hidden="true">
         <div className="aerospace-dna-float">
           <div className="aerospace-dna-image-stack">
-            <img className="aerospace-dna-image aerospace-dna-image-depth" src={dnaReferenceSrc} alt="" loading="lazy" onError={useFallbackDnaImage} />
-            <img className="aerospace-dna-image aerospace-dna-image-main" src={dnaReferenceSrc} alt="" loading="lazy" onError={useFallbackDnaImage} />
+            <img
+              className="aerospace-dna-image aerospace-dna-image-depth"
+              src={dnaReferenceSrc}
+              alt=""
+              width={1024}
+              height={1536}
+              loading="lazy"
+              decoding="async"
+              onError={useFallbackDnaImage}
+            />
+            <img
+              className="aerospace-dna-image aerospace-dna-image-main"
+              src={dnaReferenceSrc}
+              alt=""
+              width={1024}
+              height={1536}
+              loading="lazy"
+              decoding="async"
+              onError={useFallbackDnaImage}
+            />
             <span className="aerospace-dna-glass-sheen" />
           </div>
         </div>
@@ -1260,9 +1307,11 @@ function ClientConfessionsSection() {
   const [swipeTilt, setSwipeTilt] = useState(0);
   const dragStart = useRef<{ x: number; y: number; offset: number } | null>(null);
   const dragVelocity = useRef({ offset: 0, time: 0, velocity: 0 });
+  const pendingDragFrame = useRef(0);
+  const pendingDragState = useRef({ offset: 0, tilt: 0 });
   const inertiaFrame = useRef(0);
   const confessionRows = useMemo(() => {
-    const deck = Array.from({ length: clientConfessions.length * 7 }, (_, index) => ({
+    const deck = Array.from({ length: clientConfessions.length * 5 }, (_, index) => ({
       ...clientConfessions[index % clientConfessions.length],
       id: `${clientConfessions[index % clientConfessions.length].name}-${index}`,
       displayTone: index % 2 === 0 ? "dark" : "light",
@@ -1303,6 +1352,9 @@ function ClientConfessionsSection() {
       if (inertiaFrame.current) {
         window.cancelAnimationFrame(inertiaFrame.current);
       }
+      if (pendingDragFrame.current) {
+        window.cancelAnimationFrame(pendingDragFrame.current);
+      }
     };
   }, []);
 
@@ -1340,6 +1392,20 @@ function ClientConfessionsSection() {
     event.currentTarget.setPointerCapture(event.pointerId);
   };
 
+  const scheduleDragUpdate = (offset: number, tilt: number) => {
+    pendingDragState.current = { offset, tilt };
+
+    if (pendingDragFrame.current) {
+      return;
+    }
+
+    pendingDragFrame.current = window.requestAnimationFrame(() => {
+      pendingDragFrame.current = 0;
+      setSwipeTilt(pendingDragState.current.tilt);
+      setTrackOffset(pendingDragState.current.offset);
+    });
+  };
+
   const handlePointerDrag = (event: React.PointerEvent<HTMLDivElement>) => {
     const start = dragStart.current;
 
@@ -1357,8 +1423,7 @@ function ClientConfessionsSection() {
       velocity: instantVelocity * 0.72 + dragVelocity.current.velocity * 0.28,
     };
 
-    setSwipeTilt(Math.max(Math.min(-dragVelocity.current.velocity * 10, 9), -9));
-    setTrackOffset(nextOffset);
+    scheduleDragUpdate(nextOffset, Math.max(Math.min(-dragVelocity.current.velocity * 10, 9), -9));
   };
 
   const handlePointerUp = (event: React.PointerEvent<HTMLDivElement>) => {
@@ -1367,6 +1432,13 @@ function ClientConfessionsSection() {
 
     if (!start) {
       return;
+    }
+
+    if (pendingDragFrame.current) {
+      window.cancelAnimationFrame(pendingDragFrame.current);
+      pendingDragFrame.current = 0;
+      setSwipeTilt(pendingDragState.current.tilt);
+      setTrackOffset(pendingDragState.current.offset);
     }
 
     const deltaY = event.clientY - start.y;
@@ -1540,7 +1612,16 @@ function DnaCaseProofSection() {
     return (
       <section className="dna-case-section dna-case-section-reduced relative bg-[#06111f] text-white" ref={sectionRef}>
         <div className="relative mx-auto grid min-h-screen max-w-[1480px] items-end overflow-hidden px-5 py-16 sm:px-6 lg:px-7">
-          <img className="dna-case-reduced-image" src={dnaCasePoster} alt="" aria-hidden="true" loading="lazy" />
+          <img
+            className="dna-case-reduced-image"
+            src={dnaCasePoster}
+            alt=""
+            aria-hidden="true"
+            width={1672}
+            height={941}
+            loading="lazy"
+            decoding="async"
+          />
           <div className="dna-case-vignette" aria-hidden="true" />
           <div className="relative z-10 max-w-[860px] space-y-8">
             {dnaCaseSlides.map((slide) => (
@@ -1575,7 +1656,10 @@ function DnaCaseProofSection() {
             src={currentFrameSrc}
             alt=""
             aria-hidden="true"
+            width={1672}
+            height={941}
             loading="eager"
+            decoding="async"
             style={{ opacity: 1 - frameBlend }}
           />
           <img
@@ -1583,7 +1667,10 @@ function DnaCaseProofSection() {
             src={nextFrameSrc}
             alt=""
             aria-hidden="true"
+            width={1672}
+            height={941}
             loading="eager"
+            decoding="async"
             style={{ opacity: frameBlend }}
           />
         </div>
