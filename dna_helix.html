@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DNA Helix</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { background: #060c18; display: flex; align-items: center; justify-content: center; min-height: 100vh; }
+canvas { display: block; max-width: 100%; cursor: pointer; }
+</style>
+</head>
+<body>
+<canvas id="dna"></canvas>
+<script>
+const canvas = document.getElementById('dna');
+const ctx = canvas.getContext('2d');
+canvas.width = 680;
+canvas.height = 480;
+
+const CY = 240, AMP = 80, STEPS = 60, SW = canvas.width / STEPS;
+let angle = 0, running = true;
+
+function glassGrad(x, y, r, depth) {
+  const g = ctx.createRadialGradient(x - r*0.38, y - r*0.42, r*0.03, x + r*0.12, y + r*0.12, r*1.05);
+  const base = 0.55 + 0.30 * Math.max(0, depth);
+  g.addColorStop(0,    'rgba(255,255,255,0.98)');
+  g.addColorStop(0.12, `rgba(255,255,255,${Math.min(0.95, base+0.25)})`);
+  g.addColorStop(0.40, `rgba(255,255,255,${base})`);
+  g.addColorStop(0.70, `rgba(255,255,255,${base*0.72})`);
+  g.addColorStop(0.88, `rgba(255,255,255,${base*0.50})`);
+  g.addColorStop(1,    `rgba(255,255,255,${base*0.30})`);
+  return g;
+}
+
+function rimLight(x, y, r, depth) {
+  const alpha = 0.60 + 0.25 * Math.max(0, depth);
+  ctx.beginPath();
+  ctx.arc(x, y, r, 0, Math.PI*2);
+  ctx.strokeStyle = `rgba(255,255,255,${alpha})`;
+  ctx.lineWidth = r * 0.22;
+  ctx.stroke();
+}
+
+function innerShine(x, y, r) {
+  const g = ctx.createRadialGradient(x - r*0.36, y - r*0.42, 0, x - r*0.12, y - r*0.12, r*0.58);
+  g.addColorStop(0,    'rgba(255,255,255,1.0)');
+  g.addColorStop(0.35, 'rgba(255,255,255,0.65)');
+  g.addColorStop(0.75, 'rgba(255,255,255,0.18)');
+  g.addColorStop(1,    'rgba(255,255,255,0)');
+  ctx.beginPath();
+  ctx.arc(x, y, r, 0, Math.PI*2);
+  ctx.fillStyle = g;
+  ctx.fill();
+}
+
+function bottomReflect(x, y, r) {
+  const g = ctx.createRadialGradient(x + r*0.28, y + r*0.38, 0, x + r*0.15, y + r*0.22, r*0.42);
+  g.addColorStop(0,   'rgba(255,255,255,0.50)');
+  g.addColorStop(0.6, 'rgba(255,255,255,0.15)');
+  g.addColorStop(1,   'rgba(255,255,255,0)');
+  ctx.beginPath();
+  ctx.arc(x, y, r, 0, Math.PI*2);
+  ctx.fillStyle = g;
+  ctx.fill();
+}
+
+function drawBead(x, y, r, depth) {
+  ctx.save();
+  ctx.shadowColor = 'rgba(255,255,255,0.45)';
+  ctx.shadowBlur = r * 1.6;
+  ctx.beginPath();
+  ctx.arc(x, y, r, 0, Math.PI*2);
+  ctx.fillStyle = glassGrad(x, y, r, depth);
+  ctx.fill();
+  ctx.restore();
+  rimLight(x, y, r, depth);
+  bottomReflect(x, y, r);
+  innerShine(x, y, r);
+}
+
+function drawConnBead(x, y, r) {
+  const g = ctx.createRadialGradient(x - r*0.32, y - r*0.36, 0, x, y, r);
+  g.addColorStop(0,   'rgba(255,255,255,1.0)');
+  g.addColorStop(0.3, 'rgba(255,255,255,0.80)');
+  g.addColorStop(0.7, 'rgba(255,255,255,0.45)');
+  g.addColorStop(1,   'rgba(255,255,255,0.15)');
+  ctx.beginPath();
+  ctx.arc(x, y, r, 0, Math.PI*2);
+  ctx.fillStyle = g;
+  ctx.fill();
+  ctx.strokeStyle = 'rgba(255,255,255,0.80)';
+  ctx.lineWidth = 1.0;
+  ctx.stroke();
+  innerShine(x, y, r);
+}
+
+function drawTube(p1, p2, alpha) {
+  const dx = p2.x - p1.x, dy = p2.y - p1.y;
+  const len = Math.sqrt(dx*dx + dy*dy);
+  const nx = -dy/len, ny = dx/len;
+  const w = 5.5;
+  ctx.beginPath();
+  ctx.moveTo(p1.x + nx*w, p1.y + ny*w);
+  ctx.lineTo(p2.x + nx*w, p2.y + ny*w);
+  ctx.lineTo(p2.x - nx*w, p2.y - ny*w);
+  ctx.lineTo(p1.x - nx*w, p1.y - ny*w);
+  ctx.closePath();
+  const g = ctx.createLinearGradient(p1.x + nx*w, p1.y + ny*w, p1.x - nx*w, p1.y - ny*w);
+  g.addColorStop(0,    `rgba(255,255,255,${alpha*1.00})`);
+  g.addColorStop(0.18, `rgba(255,255,255,${alpha*0.85})`);
+  g.addColorStop(0.50, `rgba(255,255,255,${alpha*0.55})`);
+  g.addColorStop(0.80, `rgba(255,255,255,${alpha*0.28})`);
+  g.addColorStop(1,    `rgba(255,255,255,${alpha*0.12})`);
+  ctx.fillStyle = g;
+  ctx.fill();
+  ctx.beginPath();
+  ctx.moveTo(p1.x + nx*w, p1.y + ny*w);
+  ctx.lineTo(p2.x + nx*w, p2.y + ny*w);
+  ctx.strokeStyle = `rgba(255,255,255,${alpha*0.90})`;
+  ctx.lineWidth = 1.2;
+  ctx.stroke();
+}
+
+function draw(t) {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  const bg = ctx.createRadialGradient(340, 240, 20, 340, 240, 420);
+  bg.addColorStop(0, '#0f1a2e');
+  bg.addColorStop(1, '#04080f');
+  ctx.fillStyle = bg;
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  const pts1 = [], pts2 = [];
+  for (let i = 0; i <= STEPS; i++) {
+    const x = i * SW;
+    const phase = (i / STEPS) * Math.PI * 6 + t;
+    pts1.push({x, y: CY + Math.sin(phase) * AMP, depth: Math.cos(phase)});
+    pts2.push({x, y: CY - Math.sin(phase) * AMP, depth: -Math.cos(phase)});
+  }
+
+  for (let i = 0; i < pts1.length - 1; i++) {
+    const alpha = 0.55 + 0.35 * Math.abs(pts1[i].depth);
+    drawTube(pts1[i], pts1[i+1], alpha);
+    drawTube(pts2[i], pts2[i+1], alpha);
+  }
+
+  const pairs = pts1.map((p1, i) => ({i, p1, p2: pts2[i], cos: Math.cos((i/STEPS)*Math.PI*6+t)}));
+  pairs.sort((a,b) => (a.p1.depth + a.p2.depth) - (b.p1.depth + b.p2.depth));
+
+  for (const {i, p1, p2, cos} of pairs) {
+    if (i % 2 === 0) {
+      const mx = (p1.x+p2.x)/2, my = (p1.y+p2.y)/2;
+      const alpha = 0.50 + 0.35*Math.abs(cos);
+      drawTube(p1, p2, alpha * 0.85);
+      drawConnBead(mx, my, 6);
+    }
+    const r1 = 7 + 9 * Math.max(0, p1.depth);
+    const r2 = 7 + 9 * Math.max(0, p2.depth);
+    if (p1.depth >= p2.depth) {
+      drawBead(p2.x, p2.y, Math.max(6, r2), p2.depth);
+      drawBead(p1.x, p1.y, Math.max(6, r1), p1.depth);
+    } else {
+      drawBead(p1.x, p1.y, Math.max(6, r1), p1.depth);
+      drawBead(p2.x, p2.y, Math.max(6, r2), p2.depth);
+    }
+  }
+}
+
+function loop() {
+  if (!running) return;
+  angle += 0.0012;
+  draw(angle);
+  requestAnimationFrame(loop);
+}
+loop();
+canvas.addEventListener('click', () => { running = !running; if (running) loop(); });
+</script>
+</body>
+</html>

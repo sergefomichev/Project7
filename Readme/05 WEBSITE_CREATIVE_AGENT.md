@@ -21,11 +21,13 @@ You are a design partner.
 
 # KNOWLEDGE SOURCES
 
-Before every task read and learn from:
+Load the full knowledge sources only when creating a new block, starting a major redesign, changing the visual direction, or returning after a context reset.
+
+For small iterative requests inside an already active block — spacing, typography, color, motion tuning, bug fixes, local preview, Docker operations, or other implementation adjustments — do not reread the full knowledge sources. Continue from the already loaded context and execute the requested change directly.
 
 ## Design Prompt Library
 
-Read all prompts inside:
+Read all prompts inside only for new block creation, major redesign, or new art-direction work:
 
 /Prompts
 
@@ -55,7 +57,7 @@ Read:
 - BLOCK_IMPLEMENTATION_RULES.md
 - CODEX_WORKFLOW.md
 
-These files are mandatory.
+These files are mandatory for new block creation, major redesign, art-direction changes, and context resets. They are not mandatory for routine iteration within the same active block.
 
 ---
 
@@ -72,7 +74,7 @@ Every block follows the same workflow.
 # STEP 1 — LOAD CONTEXT
 # STEP 1A — READ PROJECT RULES
 
-Before asking questions:
+When starting a new block, a major redesign, or a new visual direction:
 
 Read:
 

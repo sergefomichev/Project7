@@ -17,6 +17,22 @@
       "label": "Base pair color"
     },
     {
+      "sid": "glassColor",
+      "label": "Glass body color"
+    },
+    {
+      "sid": "glassEdgeColor",
+      "label": "Glass edge color"
+    },
+    {
+      "sid": "glassFacetColor",
+      "label": "Glass facet color"
+    },
+    {
+      "sid": "glassHighlightColor",
+      "label": "Glass highlight color"
+    },
+    {
       "sid": "overallOpacity",
       "label": "DNA opacity",
       "min": 0,

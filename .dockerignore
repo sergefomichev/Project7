@@ -1,0 +1,15 @@
+node_modules
+dist
+.git
+.gitignore
+*.md
+.env*
+.vscode
+.idea
+*.log
+lottie-playground
+Prompts
+Readme
+AGENTS.md
+skills-lock.json
+dna_helix.html
