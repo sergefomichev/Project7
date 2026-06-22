@@ -255,6 +255,7 @@ function App() {
       <BrandDnaSection />
       <AerospaceDnaSection />
       <ClientConfessionsSection />
+      <SiteFooter />
       {visibleSections.caseProof ? <DnaCaseProofSection /> : null}
     </main>
   );
@@ -1226,6 +1227,10 @@ const clientConfessions = [
   },
 ];
 
+const footerNavLinks = ["Home", "Case studies", "About"];
+const footerUtilityLinks = ["POV", "Insights", "X", "LinkedIn", "Jobs"];
+const footerLoginLinks = ["Client portal", "Partner login"];
+
 const dnaReferenceSrc = new URL("../assets/DNA 3d block.png", import.meta.url).href;
 const dnaFallbackSrc = "/assets/images/dna-case-frame-1.png";
 
@@ -1592,6 +1597,93 @@ function ClientConfessionsSection() {
         </div>
       </div>
     </section>
+  );
+}
+
+function SiteFooter() {
+  const currentYear = new Date().getFullYear();
+
+  return (
+    <footer className="site-footer relative overflow-hidden bg-[#f7f7f4] text-[#242629]" data-section-reveal>
+      <div className="site-footer-grid pointer-events-none absolute inset-0" aria-hidden="true" />
+      <div className="site-footer-glow pointer-events-none absolute inset-x-0 top-0 h-[360px]" aria-hidden="true" />
+
+      <div className="relative z-10 mx-auto max-w-[1480px] px-5 pb-10 pt-16 sm:px-6 sm:pb-12 sm:pt-20 lg:px-7 lg:pt-24">
+        <div className="site-footer-hero grid gap-10 lg:grid-cols-[minmax(260px,0.36fr)_minmax(0,1fr)] lg:items-start">
+          <nav className="site-footer-primary-nav" aria-label="Footer primary navigation" data-reveal="title">
+            {footerNavLinks.map((item) => (
+              <a key={item} href="#">
+                {item}
+              </a>
+            ))}
+          </nav>
+
+          <div className="site-footer-wordmark-wrap" data-reveal="scale" style={{ "--reveal-index": 1 } as React.CSSProperties}>
+            <div className="site-footer-wordmark" aria-label="The Only Trusted">
+              <span>The</span>
+              <span>Only</span>
+              <span>Trusted</span>
+            </div>
+          </div>
+        </div>
+
+        <div className="site-footer-mid grid gap-10 pt-12 lg:grid-cols-[minmax(180px,0.28fr)_minmax(0,1fr)] lg:items-end lg:pt-16">
+          <nav className="site-footer-utility" aria-label="Footer secondary navigation" data-reveal="fade-up">
+            {footerUtilityLinks.map((item) => (
+              <a key={item} href="#">
+                {item}
+              </a>
+            ))}
+          </nav>
+
+          <form
+            className="site-footer-subscribe"
+            data-reveal="fade-up"
+            style={{ "--reveal-index": 1 } as React.CSSProperties}
+            onSubmit={(event) => event.preventDefault()}
+          >
+            <label htmlFor="footer-email">Subscribe to receive trust signals and rebuild notes</label>
+            <div className="site-footer-subscribe-row">
+              <input id="footer-email" type="email" placeholder="Your email address" />
+              <button className="site-footer-corner-button" type="submit">
+                <span>Subscribe</span>
+              </button>
+            </div>
+          </form>
+        </div>
+
+        <div className="site-footer-bottom grid gap-8 pt-24 text-[14px] font-medium leading-[1.35] text-black/62 sm:pt-28 lg:grid-cols-[minmax(190px,0.35fr)_minmax(180px,0.25fr)_minmax(240px,0.34fr)_minmax(290px,0.32fr)] lg:items-start">
+          <a className="site-footer-contact" href="mailto:hello@theonlytrusted.com" data-reveal="fade-up">
+            hello@theonlytrusted.com
+          </a>
+
+          <address data-reveal="fade-up" style={{ "--reveal-index": 1 } as React.CSSProperties}>
+            Remote strategy desk
+            <br />
+            New York, NY
+          </address>
+
+          <address data-reveal="fade-up" style={{ "--reveal-index": 2 } as React.CSSProperties}>
+            Brand DNA studio
+            <br />
+            Engineering alignment lab
+          </address>
+
+          <div className="site-footer-login-group" data-reveal="fade-up" style={{ "--reveal-index": 3 } as React.CSSProperties}>
+            {footerLoginLinks.map((item) => (
+              <a key={item} className="site-footer-corner-button site-footer-login" href="#">
+                <span>{item}</span>
+              </a>
+            ))}
+          </div>
+        </div>
+
+        <div className="site-footer-legal flex flex-col gap-3 border-t border-black/10 pt-5 text-[12px] font-semibold uppercase tracking-[0.12em] text-black/36 sm:flex-row sm:items-center sm:justify-between" data-reveal="fade-up">
+          <span>The Only Trusted / {currentYear}</span>
+          <span>Stakeholder alignment before interface decisions</span>
+        </div>
+      </div>
+    </footer>
   );
 }
 
